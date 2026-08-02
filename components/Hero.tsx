@@ -5,14 +5,6 @@ import s from './Hero.module.css';
 export default function Hero() {
   return (
     <section className={s.hero}>
-      {/* Clipped with `overflow: clip` so decorative bleed can never produce a
-          scrollbar, and never creates a scroll container the way `hidden` does. */}
-      <div className={s.decor} aria-hidden="true">
-        <span className={s.ghost} />
-        <span className={s.coinLeft} />
-        <span className={s.coinRight} />
-      </div>
-
       <div className={s.frame} aria-hidden="true" />
 
       <div className={s.crest}>
