@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 24" width="480" height="24" role="img" aria-label="Star rule divider">
+  <line x1="0" y1="12" x2="215" y2="12" stroke="#C8963E" stroke-width="1"></line>
+  <polygon points="240.00,2.00 242.59,8.44 249.51,8.91 244.18,13.36 245.88,20.09 240.00,16.40 234.12,20.09 235.82,13.36 230.49,8.91 237.41,8.44" fill="#C8963E"></polygon>
+  <line x1="265" y1="12" x2="480" y2="12" stroke="#C8963E" stroke-width="1"></line>
+</svg>

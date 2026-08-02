@@ -1,0 +1,59 @@
+import CrestNav from './CrestNav';
+import StarRule from './StarRule';
+import s from './Hero.module.css';
+
+export default function Hero() {
+  return (
+    <section className={s.hero}>
+      {/* Clipped with `overflow: clip` so decorative bleed can never produce a
+          scrollbar, and never creates a scroll container the way `hidden` does. */}
+      <div className={s.decor} aria-hidden="true">
+        <span className={s.ghost} />
+        <span className={s.coinLeft} />
+        <span className={s.coinRight} />
+      </div>
+
+      <div className={s.frame} aria-hidden="true" />
+
+      <div className={s.crest}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className={s.emblem} src="/art/emblem.svg" alt="" width={200} height={200} />
+
+        <h1 className={s.wordmarkWrap}>
+          {/* Traced to outlines: renders identically with no webfont, and as an
+              <img> its gradient ids cannot collide with a second instance. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className={s.wordmark}
+            src="/art/wordmark.svg"
+            alt="Brandywine Coins"
+            width={748}
+            height={192}
+          />
+        </h1>
+
+        {/* Title case, not caps: small-cap glyphs only replace lowercase letters. */}
+        <p className={s.locale}>Wilmington, Delaware</p>
+
+        <StarRule className={s.rule} />
+
+        <h2 className={s.headline}>Our Collection Opens Soon</h2>
+
+        <StarRule className={s.rule} />
+
+        <p className={s.patience}>Thank you for your patience.</p>
+
+        <CrestNav className={s.nav} />
+
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className={s.laurel}
+          src="/art/laurel-delaware.png"
+          alt=""
+          width={370}
+          height={90}
+        />
+      </div>
+    </section>
+  );
+}

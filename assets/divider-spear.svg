@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 24" width="400" height="24" role="img" aria-label="Spear divider">
+  <polygon points="0,12 150,7 150,17" fill="#C8963E"></polygon>
+  <circle cx="158" cy="12" r="6" fill="#C8963E"></circle>
+  <circle cx="242" cy="12" r="6" fill="#C8963E"></circle>
+  <polygon points="400,12 250,7 250,17" fill="#C8963E"></polygon>
+</svg>

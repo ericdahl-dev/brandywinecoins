@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #03070F; }
+  a { color: #C8963E; text-decoration: none; }
+  a:hover { color: #E3B569; }
+</style>
+</helmet>
+<div style="width:1535px;height:1024px;position:relative;overflow:hidden;background:radial-gradient(120% 100% at 50% 34%, #0E1E33 0%, #071120 46%, #03070F 100%);font-family:'Cormorant Garamond',Garamond,serif">
+
+  <img src="assets/ghost-watermark.png" alt="" style="position:absolute;left:1150px;top:50px;width:340px;height:548px;opacity:0.9;pointer-events:none;-webkit-mask-image:radial-gradient(80% 80% at 60% 45%,#000 40%,transparent 100%);mask-image:radial-gradient(80% 80% at 60% 45%,#000 40%,transparent 100%)" />
+  <img src="assets/coin-left.png" alt="" style="position:absolute;left:42px;top:470px;width:350px;height:530px;pointer-events:none;-webkit-mask-image:linear-gradient(90deg,#000 55%,transparent 100%),linear-gradient(0deg,#000 60%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,#000 55%,transparent 100%),linear-gradient(0deg,#000 60%,transparent 100%);mask-composite:intersect" />
+  <img src="assets/coin-right.png" alt="" style="position:absolute;left:1165px;top:600px;width:330px;height:398px;pointer-events:none;-webkit-mask-image:linear-gradient(270deg,#000 55%,transparent 100%),linear-gradient(0deg,#000 60%,transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(270deg,#000 55%,transparent 100%),linear-gradient(0deg,#000 60%,transparent 100%);mask-composite:intersect" />
+
+  <div style="position:absolute;inset:22px;border:1.5px solid #B8862F;clip-path:polygon(28px 0,calc(100% - 28px) 0,100% 28px,100% calc(100% - 28px),calc(100% - 28px) 100%,28px 100%,0 calc(100% - 28px),0 28px);pointer-events:none"></div>
+  <div style="position:absolute;inset:30px;border:1px solid rgba(184,134,47,0.35);clip-path:polygon(22px 0,calc(100% - 22px) 0,100% 22px,100% calc(100% - 22px),calc(100% - 22px) 100%,22px 100%,0 calc(100% - 22px),0 22px);pointer-events:none"></div>
+
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding-top:78px;gap:0">
+
+    <div style="position:relative;width:250px;height:250px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 0 46px rgba(200,150,62,0.34))">
+      <svg viewBox="0 0 200 200" style="width:100%;height:100%" role="img" aria-label="Brandywine Coins emblem">
+        <defs>
+          <linearGradient id="hbGold" x1="0" y1="0" x2="0.3" y2="1">
+            <stop offset="0%" stop-color="#F0CE8A"></stop>
+            <stop offset="42%" stop-color="#C8963E"></stop>
+            <stop offset="100%" stop-color="#8A5E22"></stop>
+          </linearGradient>
+        </defs>
+        <circle cx="100" cy="100" r="94" fill="#0A1526"></circle>
+        <circle cx="100" cy="100" r="92" fill="none" stroke="url(#hbGold)" stroke-width="7"></circle>
+        <circle cx="100" cy="100" r="78" fill="none" stroke="url(#hbGold)" stroke-width="1.6"></circle>
+        <g fill="url(#hbGold)" id="hbStars"></g>
+        <text x="100" y="103" fill="url(#hbGold)" font-family="Cormorant Garamond, Garamond, serif" font-size="98" font-weight="600" text-anchor="middle" dominant-baseline="central">B</text>
+      </svg>
+      <span style="position:absolute;right:-14px;bottom:26px;color:#B8862F;font-size:17px;font-family:Cormorant Garamond,serif">™</span>
+    </div>
+
+    <svg viewBox="0 0 748 192" style="width:760px;height:auto;margin-top:14px" role="img" aria-label="Brandywine Coins">
+      <defs>
+        <linearGradient id="hbSilver" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FFFFFF"></stop>
+          <stop offset="46%" stop-color="#E9EBEF"></stop>
+          <stop offset="63%" stop-color="#9CA1AB"></stop>
+          <stop offset="100%" stop-color="#F4F5F7"></stop>
+        </linearGradient>
+        <linearGradient id="hbGold2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#E3B569"></stop>
+          <stop offset="55%" stop-color="#C8963E"></stop>
+          <stop offset="100%" stop-color="#9A6C2C"></stop>
+        </linearGradient>
+      </defs>
+      <g font-family="Cormorant Garamond, Garamond, serif" font-weight="600">
+        <text x="374" y="96" fill="url(#hbSilver)" text-anchor="middle" font-size="104" letter-spacing="1">B<tspan font-size="74">RANDYWIN</tspan>E</text>
+        <text x="374" y="170" fill="url(#hbGold2)" text-anchor="middle" font-size="54" letter-spacing="20">COINS</text>
+      </g>
+      <g fill="url(#hbGold2)">
+        <polygon points="14,152 168,147 168,157"></polygon>
+        <circle cx="176" cy="152" r="7"></circle>
+        <circle cx="572" cy="152" r="7"></circle>
+        <polygon points="734,152 580,147 580,157"></polygon>
+      </g>
+    </svg>
+
+    <div style="margin-top:22px;color:#C8963E;font-size:27px;letter-spacing:0.22em;font-weight:500;white-space:nowrap">W<span style="font-size:21px">ILMINGTON</span>, D<span style="font-size:21px">ELAWARE</span></div>
+
+    <div style="margin-top:26px;display:flex;align-items:center;gap:18px;width:640px">
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(184,134,47,0) 0%,#B8862F 100%)"></div>
+      <svg viewBox="0 0 24 24" style="width:20px;height:20px" aria-hidden="true"><polygon points="12,2 14.6,9.2 22,9.2 16.1,13.8 18.3,21 12,16.6 5.7,21 7.9,13.8 2,9.2 9.4,9.2" fill="#C8963E"></polygon></svg>
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,#B8862F 0%,rgba(184,134,47,0) 100%)"></div>
+    </div>
+
+    <div style="margin-top:26px;color:#C8963E;font-size:62px;font-weight:600;letter-spacing:0.015em;white-space:nowrap;text-shadow:0 0 34px rgba(200,150,62,0.22)">O<span style="font-size:47px">UR</span> C<span style="font-size:47px">OLLECTION</span> O<span style="font-size:47px">PENS</span> S<span style="font-size:47px">OON</span></div>
+
+    <div style="margin-top:24px;display:flex;align-items:center;gap:18px;width:640px">
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(184,134,47,0) 0%,#B8862F 100%)"></div>
+      <svg viewBox="0 0 24 24" style="width:20px;height:20px" aria-hidden="true"><polygon points="12,2 14.6,9.2 22,9.2 16.1,13.8 18.3,21 12,16.6 5.7,21 7.9,13.8 2,9.2 9.4,9.2" fill="#C8963E"></polygon></svg>
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,#B8862F 0%,rgba(184,134,47,0) 100%)"></div>
+    </div>
+
+    <div style="margin-top:24px;color:#B8862F;font-size:23px;letter-spacing:0.3em;font-weight:500;white-space:nowrap">T<span style="font-size:18px">HANK YOU FOR YOUR PATIENCE</span>.</div>
+
+    <img src="assets/laurel-alpha.png" alt="" style="margin-top:26px;width:330px;height:auto" />
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1535,&quot;height&quot;:1024}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    const g = document.getElementById('hbStars');
+    if (!g) return;
+    const star = (cx, cy, R) => {
+      const r = R * 0.44, pts = [];
+      for (let i = 0; i < 10; i++) {
+        const rad = i % 2 ? r : R, a = i * Math.PI / 5 - Math.PI / 2;
+        pts.push((cx + rad * Math.cos(a)).toFixed(2) + ',' + (cy + rad * Math.sin(a)).toFixed(2));
+      }
+      return pts.join(' ');
+    };
+    let out = '';
+    for (let i = 0; i < 13; i++) {
+      const a = i * 2 * Math.PI / 13 - Math.PI / 2;
+      out += '<polygon points="' + star(100 + 62 * Math.cos(a), 100 + 62 * Math.sin(a), 9) + '"></polygon>';
+    }
+    g.innerHTML = out;
+  }
+}
+
+</script>
+</body>
+</html>

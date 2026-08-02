@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 748 192" width="748" height="192" role="img" aria-label="Brandywine Coins">
+  <defs>
+    <linearGradient id="bw-silver" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"></stop>
+      <stop offset="46%" stop-color="#E6E8EC"></stop>
+      <stop offset="62%" stop-color="#9EA3AD"></stop>
+      <stop offset="100%" stop-color="#F4F5F7"></stop>
+    </linearGradient>
+    <linearGradient id="bw-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E3B569"></stop>
+      <stop offset="55%" stop-color="#C8963E"></stop>
+      <stop offset="100%" stop-color="#9A6C2C"></stop>
+    </linearGradient>
+  </defs>
+  <g font-family="Cormorant Garamond, Garamond, Times New Roman, serif" font-weight="600">
+    <text x="374" y="96" fill="url(#bw-silver)" text-anchor="middle" font-size="104" letter-spacing="1">B<tspan font-size="74">RANDYWIN</tspan>E</text>
+    <text x="374" y="170" fill="url(#bw-gold)" text-anchor="middle" font-size="54" letter-spacing="20">COINS</text>
+  </g>
+  <g fill="url(#bw-gold)">
+    <polygon points="14,152 168,147 168,157"></polygon>
+    <circle cx="176" cy="152" r="7"></circle>
+    <circle cx="572" cy="152" r="7"></circle>
+    <polygon points="734,152 580,147 580,157"></polygon>
+  </g>
+</svg>

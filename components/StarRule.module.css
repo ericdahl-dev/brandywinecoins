@@ -1,0 +1,27 @@
+.rule {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 1.8cqi, 18px);
+  width: min(640px, 100%);
+  color: var(--coin-gold);
+}
+
+.line {
+  flex: 1;
+  height: 1px;
+  min-width: 0;
+}
+
+.line:first-of-type {
+  background: linear-gradient(90deg, rgb(184 134 47 / 0%) 0%, var(--aged-brass) 100%);
+}
+
+.line:last-of-type {
+  background: linear-gradient(90deg, var(--aged-brass) 0%, rgb(184 134 47 / 0%) 100%);
+}
+
+.star {
+  flex: none;
+  width: clamp(12px, 2cqi, 20px);
+  height: auto;
+}

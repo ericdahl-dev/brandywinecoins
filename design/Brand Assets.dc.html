@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #050B14; }
+  a { color: #C8963E; text-decoration: none; }
+  a:hover { color: #E0B463; }
+</style>
+</helmet>
+<div style="min-height:100vh;background:#050B14;color:#EDEDF0;font-family:'IBM Plex Mono',monospace;padding:64px 56px 96px;box-sizing:border-box">
+  <div style="max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:56px">
+
+    <div style="display:flex;flex-direction:column;gap:10px;border-bottom:1px solid #1C2432;padding-bottom:28px">
+      <div style="font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#8A6A3C">Brandywine Coins</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:44px;letter-spacing:0.02em;color:#F2F2F4">Asset breakdown</div>
+      <div style="font-size:13px;line-height:1.7;color:#7E8798;max-width:620px">Source artwork sliced into reusable pieces. Each tile is a real file in <span style="color:#C8963E">assets/</span> — drop them straight into a build.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="background:#0A1220;border:1px solid #1C2432;border-radius:3px;height:220px;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box">
+          <img src="assets/logo-emblem.png" alt="Emblem" style="max-width:100%;max-height:100%;object-fit:contain" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:12px;color:#C8963E">assets/logo-emblem.png</div>
+          <div style="font-size:11px;color:#6F7889">Primary mark · 380×302 · glow intact · use at 48px+</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="background:#0A1220;border:1px solid #1C2432;border-radius:3px;height:220px;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box">
+          <img src="assets/wordmark.png" alt="Wordmark" style="max-width:100%;max-height:100%;object-fit:contain" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:12px;color:#C8963E">assets/wordmark.png</div>
+          <div style="font-size:11px;color:#6F7889">Lockup · 748×192 · dark backgrounds only</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="background:#0A1220;border:1px solid #1C2432;border-radius:3px;height:220px;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box">
+          <img src="assets/laurel-delaware.png" alt="Laurel" style="max-width:100%;max-height:100%;object-fit:contain" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:12px;color:#C8963E">assets/laurel-delaware.png</div>
+          <div style="font-size:11px;color:#6F7889">Ornament · 370×90 · footers, dividers</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="background:#0A1220;border:1px solid #1C2432;border-radius:3px;height:220px;overflow:hidden;display:flex;align-items:center;justify-content:center">
+          <img src="assets/coin-left.png" alt="Coin left" style="width:100%;height:100%;object-fit:cover" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:12px;color:#C8963E">assets/coin-left.png</div>
+          <div style="font-size:11px;color:#6F7889">Relief coin · 350×530 · bleeds off left edge</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="background:#0A1220;border:1px solid #1C2432;border-radius:3px;height:220px;overflow:hidden;display:flex;align-items:center;justify-content:center">
+          <img src="assets/coin-right.png" alt="Coin right" style="width:100%;height:100%;object-fit:cover" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:12px;color:#C8963E">assets/coin-right.png</div>
+          <div style="font-size:11px;color:#6F7889">2 Kronor coin · 330×398 · bleeds off right edge</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="background:#0A1220;border:1px solid #1C2432;border-radius:3px;height:220px;overflow:hidden;display:flex;align-items:center;justify-content:center">
+          <img src="assets/texture-bg.png" alt="Texture" style="width:100%;height:100%;object-fit:cover" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:12px;color:#C8963E">assets/texture-bg.png</div>
+          <div style="font-size:11px;color:#6F7889">Navy field + vignette · 360×260 · stretch behind content</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#8A6A3C">Transparent cutouts</div>
+      <div style="font-size:12px;color:#7E8798;line-height:1.7;max-width:620px">Background keyed out of the gold artwork — same pixels, alpha channel. Shown on light and dark to prove the edges.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid #1C2432;border-radius:3px;overflow:hidden">
+            <div style="background:#EFEDE8;height:180px;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box"><img src="assets/logo-emblem-alpha.png" alt="Emblem cutout on light" style="max-width:100%;max-height:100%;object-fit:contain" /></div>
+            <div style="background:#0A1628;height:180px;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box"><img src="assets/logo-emblem-alpha.png" alt="Emblem cutout on dark" style="max-width:100%;max-height:100%;object-fit:contain" /></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:12px;color:#C8963E">assets/logo-emblem-alpha.png</div>
+            <div style="font-size:11px;color:#6F7889">Knockout mark · disc reads through</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid #1C2432;border-radius:3px;overflow:hidden">
+            <div style="background:#EFEDE8;height:180px;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box"><img src="assets/wordmark-alpha.png" alt="Wordmark cutout on light" style="max-width:100%;max-height:100%;object-fit:contain" /></div>
+            <div style="background:#0A1628;height:180px;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box"><img src="assets/wordmark-alpha.png" alt="Wordmark cutout on dark" style="max-width:100%;max-height:100%;object-fit:contain" /></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:12px;color:#C8963E">assets/wordmark-alpha.png</div>
+            <div style="font-size:11px;color:#6F7889">Silver letters go invisible on light — dark use only</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid #1C2432;border-radius:3px;overflow:hidden">
+            <div style="background:#EFEDE8;height:180px;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box"><img src="assets/laurel-alpha.png" alt="Laurel cutout on light" style="max-width:100%;max-height:100%;object-fit:contain" /></div>
+            <div style="background:#0A1628;height:180px;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box"><img src="assets/laurel-alpha.png" alt="Laurel cutout on dark" style="max-width:100%;max-height:100%;object-fit:contain" /></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:12px;color:#C8963E">assets/laurel-alpha.png</div>
+            <div style="font-size:11px;color:#6F7889">Works on any ground</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#8A6A3C">Vectors</div>
+      <div style="font-size:12px;color:#7E8798;line-height:1.7;max-width:620px">Redrawn as SVG — infinitely scalable, recolorable, a few hundred bytes each. Geometry is exact; the <span style="color:#C8963E">B</span> uses a serif webfont, so set it in whatever face you license.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="background:#0A1220;border:1px solid #1C2432;border-radius:3px;height:200px;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box"><img src="assets/emblem.svg" alt="Emblem vector" style="height:100%" /></div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:12px;color:#C8963E">assets/emblem.svg</div>
+            <div style="font-size:11px;color:#6F7889">Favicon, nav mark, print</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="background:#0A1220;border:1px solid #1C2432;border-radius:3px;height:200px;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box">
+            <svg viewBox="0 0 748 192" style="width:100%;height:auto" role="img" aria-label="Brandywine Coins wordmark vector">
+              <defs>
+                <linearGradient id="bwSilver" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#FFFFFF"></stop>
+                  <stop offset="46%" stop-color="#E6E8EC"></stop>
+                  <stop offset="62%" stop-color="#9EA3AD"></stop>
+                  <stop offset="100%" stop-color="#F4F5F7"></stop>
+                </linearGradient>
+                <linearGradient id="bwGold" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#E3B569"></stop>
+                  <stop offset="55%" stop-color="#C8963E"></stop>
+                  <stop offset="100%" stop-color="#9A6C2C"></stop>
+                </linearGradient>
+              </defs>
+              <g font-family="Cormorant Garamond, Garamond, serif" font-weight="600">
+                <text x="374" y="96" fill="url(#bwSilver)" text-anchor="middle" font-size="104" letter-spacing="1">B<tspan font-size="74">RANDYWIN</tspan>E</text>
+                <text x="374" y="170" fill="url(#bwGold)" text-anchor="middle" font-size="54" letter-spacing="20">COINS</text>
+              </g>
+              <g fill="url(#bwGold)">
+                <polygon points="14,152 168,147 168,157"></polygon>
+                <circle cx="176" cy="152" r="7"></circle>
+                <circle cx="572" cy="152" r="7"></circle>
+                <polygon points="734,152 580,147 580,157"></polygon>
+              </g>
+            </svg>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:12px;color:#C8963E">assets/wordmark.svg</div>
+            <div style="font-size:11px;color:#6F7889">Live text + gradients · needs Cormorant Garamond loaded (convert to outlines for standalone use)</div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="background:#0A1220;border:1px solid #1C2432;border-radius:3px;height:200px;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box"><img src="assets/divider-spear.svg" alt="Spear divider vector" style="width:100%" /></div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:12px;color:#C8963E">assets/divider-spear.svg</div>
+            <div style="font-size:11px;color:#6F7889">Flanks a word, as in COINS</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="background:#0A1220;border:1px solid #1C2432;border-radius:3px;height:200px;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box"><img src="assets/divider-star.svg" alt="Star rule vector" style="width:100%" /></div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:12px;color:#C8963E">assets/divider-star.svg</div>
+            <div style="font-size:11px;color:#6F7889">Section rule between blocks</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#8A6A3C">Palette</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="height:88px;background:#050B14;border:1px solid #1C2432;border-radius:3px"></div>
+          <div style="font-size:11px;color:#EDEDF0">Ink Navy</div>
+          <div style="font-size:11px;color:#6F7889">#050B14 · page ground</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="height:88px;background:#0A1628;border:1px solid #1C2432;border-radius:3px"></div>
+          <div style="font-size:11px;color:#EDEDF0">Field Navy</div>
+          <div style="font-size:11px;color:#6F7889">#0A1628 · panels, cards</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="height:88px;background:#C8963E;border-radius:3px"></div>
+          <div style="font-size:11px;color:#EDEDF0">Coin Gold</div>
+          <div style="font-size:11px;color:#6F7889">#C8963E · accents, rules</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="height:88px;background:#8A6A3C;border-radius:3px"></div>
+          <div style="font-size:11px;color:#EDEDF0">Aged Brass</div>
+          <div style="font-size:11px;color:#6F7889">#8A6A3C · secondary text</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="height:88px;background:#F2F2F4;border-radius:3px"></div>
+          <div style="font-size:11px;color:#EDEDF0">Silver Leaf</div>
+          <div style="font-size:11px;color:#6F7889">#F2F2F4 · headlines</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#8A6A3C">Type</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px">
+        <div style="background:#0A1220;border:1px solid #1C2432;border-radius:3px;padding:28px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:40px;color:#F2F2F4;letter-spacing:0.03em">Brandywine</div>
+          <div style="font-size:11px;color:#6F7889;line-height:1.7">Display serif, small-caps feel. Cormorant Garamond stands in for the original engraved face — swap for Trajan or Cinzel if licensed.</div>
+        </div>
+        <div style="background:#0A1220;border:1px solid #1C2432;border-radius:3px;padding:28px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-size:15px;color:#C8963E;letter-spacing:0.24em;text-transform:uppercase">Wilmington, Delaware</div>
+          <div style="font-size:11px;color:#6F7889;line-height:1.7">Wide-tracked caps for eyebrows and metadata. 0.24em tracking, gold or brass, never below 11px.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#8A6A3C">Source</div>
+      <img src="assets/full-hero.png" alt="Original artwork" style="width:100%;border:1px solid #1C2432;border-radius:3px" />
+      <div style="font-size:11px;color:#6F7889">assets/full-hero.png · 1535×1024 · original composite</div>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+</body>
+</html>

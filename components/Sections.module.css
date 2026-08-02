@@ -1,0 +1,124 @@
+/* The ornate frame is a hero device. Repeating it per section would make it
+   wallpaper, so sections stay unframed and use the star rule as the opener.
+   Each gets its own soft vignette rather than tiling the hero's radial, which
+   is anchored for the hero's box and would look like a bug if repeated. */
+.section {
+  position: relative;
+  padding: clamp(72px, 12svh, 120px) clamp(18px, 4vw, 40px) clamp(80px, 13svh, 128px);
+  background: radial-gradient(
+    90% 70% at 50% 30%,
+    #0b1828 0%,
+    #050e1a 60%,
+    var(--ink-navy) 100%
+  );
+  scroll-margin-top: clamp(1rem, 6svh, 4rem);
+}
+
+.inner {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(1000px, 100%);
+  margin-inline: auto;
+  text-align: center;
+}
+
+.opener {
+  margin-bottom: clamp(18px, 3cqi, 28px);
+}
+
+/* Silver reads as identity and structure, gold as precious and active. Keeping
+   section titles silver stops them competing with the hero's gold focal line. */
+.title {
+  font-family: var(--font-cormorant-sc), var(--font-cormorant), Garamond, serif;
+  font-weight: 600;
+  font-size: clamp(1.5rem, 4cqi, 2.5rem);
+  letter-spacing: 0.16em;
+  text-indent: 0.16em;
+  line-height: 1.1;
+  color: var(--silver-leaf);
+  text-wrap: balance;
+}
+
+/* Centre the block, left-align the text. Ragged-both centred paragraphs are
+   genuinely hard to read and would undercut the story. */
+.prose {
+  margin-top: clamp(28px, 4.4cqi, 44px);
+  max-width: 42rem;
+  text-align: left;
+  font-weight: 500;
+  font-size: clamp(1.0625rem, 2.1cqi, 1.3125rem);
+  line-height: 1.65;
+  color: var(--body-text);
+}
+
+.prose p + p {
+  margin-top: 1.15em;
+}
+
+.spear {
+  width: min(240px, 60%);
+  margin-top: clamp(26px, 4cqi, 40px);
+  color: var(--aged-brass);
+}
+
+.pullQuote {
+  max-width: 35rem;
+  margin-top: clamp(16px, 2.4cqi, 24px);
+  font-weight: 600;
+  font-style: italic;
+  font-size: clamp(1.125rem, 2.7cqi, 1.6875rem);
+  line-height: 1.4;
+  color: var(--coin-gold);
+  text-wrap: balance;
+}
+
+/* --------------------------------- plate ---------------------------------- */
+
+/* Radiused to match the frame's corner language, which lets it use a real
+   border instead of the two-layer clip-path sandwich it needed before. */
+.plate {
+  width: min(45rem, 100%);
+  margin-top: clamp(28px, 4.4cqi, 44px);
+  border: 1px solid var(--brass-dim);
+  border-radius: 14px;
+  background: rgb(4 10 20 / 92%);
+}
+
+.plateInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(30px, 5cqi, 48px) clamp(22px, 5.6cqi, 56px);
+}
+
+.plateMark {
+  width: clamp(48px, 8cqi, 64px);
+  height: auto;
+}
+
+.plateHeading {
+  margin-top: clamp(16px, 2.4cqi, 24px);
+  font-family: var(--font-cormorant-sc), var(--font-cormorant), Garamond, serif;
+  font-weight: 600;
+  font-size: clamp(1.25rem, 3.4cqi, 2.125rem);
+  letter-spacing: 0.06em;
+  line-height: 1.15;
+  color: var(--coin-gold);
+  text-wrap: balance;
+}
+
+.plateBody {
+  max-width: 30rem;
+  margin-top: clamp(12px, 2cqi, 20px);
+  font-weight: 500;
+  font-size: clamp(1rem, 2cqi, 1.25rem);
+  line-height: 1.6;
+  color: var(--body-text);
+  text-wrap: pretty;
+}
+
+.plateInner > a {
+  margin-top: clamp(22px, 3.2cqi, 32px);
+}
