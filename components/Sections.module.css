@@ -31,7 +31,7 @@
 /* Silver reads as identity and structure, gold as precious and active. Keeping
    section titles silver stops them competing with the hero's gold focal line. */
 .title {
-  font-family: var(--font-cormorant-sc), var(--font-cormorant), Garamond, serif;
+  font-family: var(--font-cinzel), Trajan Pro, Times New Roman, serif;
   font-weight: 600;
   font-size: clamp(1.5rem, 4cqi, 2.5rem);
   letter-spacing: 0.16em;
@@ -100,7 +100,7 @@
 
 .plateHeading {
   margin-top: clamp(16px, 2.4cqi, 24px);
-  font-family: var(--font-cormorant-sc), var(--font-cormorant), Garamond, serif;
+  font-family: var(--font-cinzel), Trajan Pro, Times New Roman, serif;
   font-weight: 600;
   font-size: clamp(1.25rem, 3.4cqi, 2.125rem);
   letter-spacing: 0.06em;

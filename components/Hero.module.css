@@ -125,7 +125,7 @@
 
 .locale,
 .patience {
-  font-family: var(--font-cormorant-sc), var(--font-cormorant), Garamond, serif;
+  font-family: var(--font-cinzel), Trajan Pro, Times New Roman, serif;
   font-weight: 500;
   color: var(--coin-gold);
   text-wrap: balance;
@@ -145,11 +145,17 @@
 .headline {
   margin-top: var(--rhythm);
   max-width: 100%;
-  font-family: var(--font-cormorant-sc), var(--font-cormorant), Garamond, serif;
+  font-family: var(--font-cinzel), Trajan Pro, Times New Roman, serif;
   font-weight: 600;
   /* No nowrap. It does not prevent overflow, it guarantees it -- this line is
-     ~1000px at full size and would blow through any phone viewport. */
-  font-size: clamp(1.5rem, 6.2cqi, 3.875rem);
+     ~1000px at full size and would blow through any phone viewport.
+
+     Sized in vw rather than cqi: the crest caps at 1000px but the corner coins
+     scale with the viewport, always occupying its outer ~24%. A crest-relative
+     size therefore stays 980px wide while the clear channel between the coins
+     keeps shrinking, and the line ends up sitting on top of both of them below
+     ~1900px. Tying it to vw keeps it inside the channel at every width. */
+  font-size: clamp(1.25rem, 3.2vw, 3.875rem);
   line-height: 1.1;
   letter-spacing: 0.015em;
   color: var(--coin-gold);

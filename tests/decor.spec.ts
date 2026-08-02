@@ -52,8 +52,14 @@ test.describe('decoration and content separation', () => {
 
         const leftGap = box!.x;
         const rightGap = width - (box!.x + box!.width);
-        expect(leftGap, `${name} too close to left edge at ${width}px`).toBeGreaterThan(24);
-        expect(rightGap, `${name} too close to right edge at ${width}px`).toBeGreaterThan(24);
+
+        // The corner coins occupy roughly the outer 24% of the plate on each
+        // side at desktop widths. Requiring a proportional margin -- not a
+        // fixed px gap -- is what actually keeps text out of the artwork; a
+        // 24px bound passed while the headline sat on top of both coins.
+        const minGap = width >= 1200 ? width * 0.22 : 24;
+        expect(leftGap, `${name} runs into left coin at ${width}px`).toBeGreaterThan(minGap);
+        expect(rightGap, `${name} runs into right coin at ${width}px`).toBeGreaterThan(minGap);
 
         // Centred to within a few px, so it never drifts toward one coin.
         expect(
