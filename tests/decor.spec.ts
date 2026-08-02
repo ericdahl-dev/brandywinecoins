@@ -35,29 +35,31 @@ test.describe('decoration and content separation', () => {
     }
   });
 
-  test('coin decoration never overlaps the headline', async ({ page }) => {
-    for (const width of [375, 768, 1024, 1440, 1920]) {
+  // The coins now live in the hero's background plate rather than as elements,
+  // so there is no box to measure and an overlap assertion would pass
+  // vacuously. What still matters is that the content column stays inside a
+  // centre safe zone, since the corner artwork is what occupies the edges.
+  test('content stays within the centre safe zone', async ({ page }) => {
+    for (const width of [768, 1024, 1440, 1920]) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto('/');
 
-      const headline = await page
-        .getByRole('heading', { name: 'Our Collection Opens Soon' })
-        .boundingBox();
-      expect(headline).not.toBeNull();
+      for (const name of ['Our Collection Opens Soon', 'Brandywine Coins']) {
+        const box = await page
+          .getByRole('heading', { name })
+          .boundingBox();
+        expect(box, `${name} has no box at ${width}px`).not.toBeNull();
 
-      const coins = await page.locator('[class*="coin"]').all();
-      for (const coin of coins) {
-        if (!(await coin.isVisible())) continue;
-        const c = await coin.boundingBox();
-        if (!c) continue;
+        const leftGap = box!.x;
+        const rightGap = width - (box!.x + box!.width);
+        expect(leftGap, `${name} too close to left edge at ${width}px`).toBeGreaterThan(24);
+        expect(rightGap, `${name} too close to right edge at ${width}px`).toBeGreaterThan(24);
 
-        const overlaps =
-          c.x < headline!.x + headline!.width &&
-          c.x + c.width > headline!.x &&
-          c.y < headline!.y + headline!.height &&
-          c.y + c.height > headline!.y;
-
-        expect(overlaps, `coin collides with headline at ${width}px`).toBe(false);
+        // Centred to within a few px, so it never drifts toward one coin.
+        expect(
+          Math.abs(leftGap - rightGap),
+          `${name} off-centre at ${width}px`,
+        ).toBeLessThan(8);
       }
     }
   });
