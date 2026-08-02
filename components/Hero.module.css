@@ -44,44 +44,6 @@
   }
 }
 
-/* -------------------------------- the frame -------------------------------- */
-
-.frame {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-/* The artwork turns these corners on a radius, not a 45deg notch. The comp
-   used clip-path polygons here and that is where it drifts from the source. */
-.frame::before,
-.frame::after {
-  --inset: clamp(10px, 1.4vw, 22px);
-
-  content: '';
-  position: absolute;
-  inset: var(--inset);
-  border: 1.5px solid var(--aged-brass);
-  border-radius: clamp(9px, 1.3vw, 20px);
-}
-
-.frame::after {
-  --inset: calc(clamp(10px, 1.4vw, 22px) + clamp(4px, 0.52vw, 8px));
-
-  border-width: 1px;
-  border-color: rgb(184 134 47 / 45%);
-  /* Inner radius = outer radius minus the gap, so the curves stay concentric. */
-  border-radius: calc(clamp(9px, 1.3vw, 20px) - clamp(4px, 0.52vw, 8px));
-}
-
-/* Two hairlines a few px apart read as misregistration at phone density.
-   One deliberate line beats two accidental ones. */
-@media (max-width: 30rem) {
-  .frame::after {
-    display: none;
-  }
-}
-
 /* -------------------------------- the crest -------------------------------- */
 
 .crest {

@@ -1,11 +1,12 @@
 import CrestNav from './CrestNav';
+import Frame from './Frame';
 import StarRule from './StarRule';
 import s from './Hero.module.css';
 
 export default function Hero() {
   return (
     <section className={s.hero}>
-      <div className={s.frame} aria-hidden="true" />
+      <Frame />
 
       <div className={s.crest}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
