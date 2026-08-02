@@ -1,0 +1,40 @@
+import s from './Frame.module.css';
+
+/**
+ * The ornamental double frame.
+ *
+ * Corners are concave: the arc's centre sits on the frame's own corner, so the
+ * curve bulges inward. Fitting the source artwork's pixels confirms it -- at
+ * y=30 the line is at x=41, which a concave arc predicts (41.2) and a convex
+ * one does not (24.3).
+ *
+ * That cannot be drawn with border-radius on the ring itself, which only bends
+ * the other way. Instead each corner is a square whose *inner* corner is
+ * rounded to 100%, which puts the arc's centre exactly on the frame corner, and
+ * the straight runs are separate elements inset by the radius. Keeping corners
+ * as fixed squares also stops the arcs turning into ellipses on wide viewports,
+ * which is what a stretched SVG frame would do.
+ */
+function Ring({ variant }: { variant: 'outer' | 'inner' }) {
+  return (
+    <div className={variant === 'outer' ? s.outer : s.inner}>
+      <span className={s.top} />
+      <span className={s.right} />
+      <span className={s.bottom} />
+      <span className={s.left} />
+      <span className={s.cTL} />
+      <span className={s.cTR} />
+      <span className={s.cBR} />
+      <span className={s.cBL} />
+    </div>
+  );
+}
+
+export default function Frame() {
+  return (
+    <div className={s.frame} aria-hidden="true">
+      <Ring variant="outer" />
+      <Ring variant="inner" />
+    </div>
+  );
+}

@@ -1,0 +1,119 @@
+.frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.outer,
+.inner {
+  position: absolute;
+  inset: var(--inset);
+}
+
+.outer {
+  --inset: clamp(10px, 1.4vw, 22px);
+  --r: clamp(13px, 1.56vw, 24px);
+  --w: 1.5px;
+  --c: var(--aged-brass);
+}
+
+.inner {
+  --gap: clamp(4px, 0.52vw, 8px);
+  --inset: calc(clamp(10px, 1.4vw, 22px) + clamp(4px, 0.52vw, 8px));
+  /* Concentric: the inner arc's centre moves in by the gap, so its radius has
+     to shrink by the same amount or the two curves cross. */
+  --r: calc(clamp(13px, 1.56vw, 24px) - clamp(4px, 0.52vw, 8px));
+  --w: 1px;
+  --c: rgb(184 134 47 / 45%);
+}
+
+/* Straight runs, inset by the radius so they meet the arcs cleanly. */
+.top,
+.right,
+.bottom,
+.left {
+  position: absolute;
+  background: var(--c);
+}
+
+.top,
+.bottom {
+  left: var(--r);
+  right: var(--r);
+  height: var(--w);
+}
+
+.top {
+  top: 0;
+}
+
+.bottom {
+  bottom: 0;
+}
+
+.left,
+.right {
+  top: var(--r);
+  bottom: var(--r);
+  width: var(--w);
+}
+
+.left {
+  left: 0;
+}
+
+.right {
+  right: 0;
+}
+
+/* Each corner is a --r square whose inner corner is fully rounded. A 100%
+   radius on an --r box puts the arc's centre on the box's outer corner, which
+   is the frame corner -- giving the concave sweep the artwork has. */
+.cTL,
+.cTR,
+.cBR,
+.cBL {
+  position: absolute;
+  width: var(--r);
+  height: var(--r);
+}
+
+.cTL {
+  top: 0;
+  left: 0;
+  border-right: var(--w) solid var(--c);
+  border-bottom: var(--w) solid var(--c);
+  border-bottom-right-radius: 100%;
+}
+
+.cTR {
+  top: 0;
+  right: 0;
+  border-left: var(--w) solid var(--c);
+  border-bottom: var(--w) solid var(--c);
+  border-bottom-left-radius: 100%;
+}
+
+.cBR {
+  right: 0;
+  bottom: 0;
+  border-left: var(--w) solid var(--c);
+  border-top: var(--w) solid var(--c);
+  border-top-left-radius: 100%;
+}
+
+.cBL {
+  bottom: 0;
+  left: 0;
+  border-right: var(--w) solid var(--c);
+  border-top: var(--w) solid var(--c);
+  border-top-right-radius: 100%;
+}
+
+/* Two hairlines a few px apart read as misregistration at phone density.
+   One deliberate line beats two accidental ones. */
+@media (max-width: 30rem) {
+  .inner {
+    display: none;
+  }
+}
