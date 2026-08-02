@@ -53,7 +53,11 @@ Three things in the source art were fixed rather than worked around:
 - **The coins had no alpha.** `coin-left.png` / `coin-right.png` were opaque
   rectangular crops with the navy baked in, which the comp hid behind stacked
   `mask-image` + `mask-composite` gradients. They are now genuine cutouts, so
-  the masking hack is gone and they can sit on any background.
+  the masking hack is gone and they can sit on any background. They are cut from
+  the newer `homepage-desktop.png` artwork rather than the original JPEG — same
+  coins, but warmer and with the engraving detail intact. The ornamental frame
+  line is painted across each coin in that source; it falls in the sliver that
+  bleeds off-canvas, so it is trimmed rather than inpainted.
 - **`ghost-watermark.png` was dropped.** It was the emblem, ghosted, so the site
   reuses the emblem SVG at low opacity instead.
 

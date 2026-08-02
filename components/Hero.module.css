@@ -45,19 +45,21 @@
   --coin-w: clamp(0px, calc(var(--gutter) * 1.3), 350px);
 
   width: var(--coin-w);
-  aspect-ratio: 350 / 530;
+  aspect-ratio: 343 / 499;
 }
 
+/* The trimmed edge is the frame line that was painted across the coin in the
+   source art, so each coin bleeds off on the side it was trimmed from. */
 .coinLeft {
-  left: calc(var(--coin-w) * -0.12);
+  left: calc(var(--coin-w) * -0.14);
   bottom: calc(var(--coin-w) * -0.14);
   background-image: url('/art/coin-left.png');
 }
 
 .coinRight {
-  right: calc(var(--coin-w) * -0.1);
+  right: calc(var(--coin-w) * -0.12);
   bottom: calc(var(--coin-w) * -0.1);
-  aspect-ratio: 330 / 398;
+  aspect-ratio: 336 / 411;
   background-image: url('/art/coin-right.png');
 }
 
