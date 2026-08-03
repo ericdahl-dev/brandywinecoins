@@ -15,6 +15,12 @@ const eslintConfig = defineConfig([
     // Source comps and the design tool's runtime. Reference material kept for
     // provenance, not application code.
     "design/**",
+    // Written by `payload migrate:create`, `generate:types` and
+    // `generate:importmap`. Editing them to satisfy a linter would be undone by
+    // the next generate, and the warnings are in Payload's own signatures.
+    "cms/migrations/**",
+    "cms/payload-types.ts",
+    "app/(payload)/admin/importMap.js",
   ]),
 ]);
 

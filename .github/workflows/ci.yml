@@ -15,6 +15,29 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
+    # `npm start` runs `payload migrate` before `next start`, so the suite needs a
+    # database even though every test today hits only the static page. Keeping
+    # migrations in the start command rather than in Coolify's UI is deliberate:
+    # #40 was about configuration living where no review sees it.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: payload
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: brandywine
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U payload"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URI: postgres://payload:postgres@127.0.0.1:5432/brandywine
+      PAYLOAD_SECRET: ci-only-secret
+
     steps:
       - uses: actions/checkout@v7
 
