@@ -71,7 +71,17 @@
      reproduces the artwork, which offsets the disc left to balance the mark. */
   width: calc(var(--crest-w) * 0.34);
   height: auto;
-  filter: drop-shadow(0 0 calc(var(--crest-w) * 0.06) rgb(200 150 62 / 34%));
+  /* The artwork's glow is not the soft wash a single wide drop-shadow gives.
+     Measured in clear sky above the disc, against the far-field baseline, the
+     warm excess (R minus B) is +28 in the shell from 1.00 to 1.03 of the disc
+     radius and gone by 1.10 -- everything past that is the plate's own vignette
+     and reads neutral or cool. So: a bright rim hugging the edge, a short
+     falloff behind it, and only then a wide lift, which is what separates the
+     mark on viewports where the plate is cropped away from its vignette. */
+  filter:
+    drop-shadow(0 0 calc(var(--crest-w) * 0.007) rgb(255 216 148 / 34%))
+    drop-shadow(0 0 calc(var(--crest-w) * 0.022) rgb(232 184 104 / 22%))
+    drop-shadow(0 0 calc(var(--crest-w) * 0.075) rgb(200 150 62 / 16%));
 }
 
 .wordmarkWrap {

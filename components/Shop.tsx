@@ -12,7 +12,7 @@ export default function Shop() {
         <div className={s.plate}>
           <div className={s.plateInner}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className={s.plateMark} src="/art/emblem.svg" alt="" width={64} height={64} />
+            <img className={s.plateMark} src="/art/emblem.svg" alt="" width={67} height={64} />
 
             {/* Deliberately smaller than the hero's line: the hero announces
                 it, this confirms it. Two focal points would be neither. */}
