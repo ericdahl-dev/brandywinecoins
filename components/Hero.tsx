@@ -9,8 +9,9 @@ export default function Hero() {
       <Frame />
 
       <div className={s.crest}>
+        {/* 208x200, not square: the trademark sits outside the ring. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className={s.emblem} src="/art/emblem.svg" alt="" width={200} height={200} />
+        <img className={s.emblem} src="/art/emblem.svg" alt="" width={208} height={200} />
 
         <h1 className={s.wordmarkWrap}>
           {/* Traced to outlines: renders identically with no webfont, and as an

@@ -71,6 +71,20 @@ Three things in the source art were fixed rather than worked around:
   coins, but warmer and with the engraving detail intact. The ornamental frame
   line is painted across each coin in that source; it falls in the sliver that
   bleeds off-canvas, so it is trimmed rather than inpainted.
+- **The emblem is traced too, except its rings.** It had been reconstructed from
+  primitives, which got four things measurably wrong: 13 stars where the artwork
+  has 12 (evenly spaced at 30.0°, measured sd 1.1°, starting at twelve o'clock —
+  13 came from the comp's JS, not the art); the inner ring at r=78 where the
+  artwork puts it at 88.7 (outer ring = 100); a Cinzel B at 57×67 where the
+  artwork's is 67×84, a much taller and narrower letter; and the trademark
+  parked on the ring at r=94.5 when the artwork sets it clear of the ring at
+  r=127, which is why the ™ looked wrong. Stars, B and ™ are now traced. The two
+  rings are *not* — a 380px trace of a circle wanders 1.2% of its radius, and a
+  lumpy ring is the one thing on this mark the eye catches, so they are redrawn
+  as real circles at the traced radii. `logo-emblem-alpha.png` is a 1:1 crop of
+  `full-hero.png` (verified: zero pixel difference at origin 590,52) but its
+  canvas clips the last two rows off the bottom of the disc, so the annulus is
+  closed analytically from the fitted circle before tracing.
 - **`ghost-watermark.png` was dropped.** It was the emblem, ghosted, so the site
   reuses the emblem SVG at low opacity instead.
 

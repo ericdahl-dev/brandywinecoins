@@ -64,7 +64,12 @@
 }
 
 .emblem {
-  width: calc(var(--crest-w) * 0.326);  /* viewBox widened for the trademark */
+  /* The artwork sets the disc at 0.349x the wordmark's ink width. The wordmark
+     image is 6% wider than its ink and the emblem's viewBox is 4% wider than
+     its disc (the trademark sits outside the ring), so the two element widths
+     land at 0.34. Centring the emblem element -- not the disc -- also
+     reproduces the artwork, which offsets the disc left to balance the mark. */
+  width: calc(var(--crest-w) * 0.34);
   height: auto;
   filter: drop-shadow(0 0 calc(var(--crest-w) * 0.06) rgb(200 150 62 / 34%));
 }
