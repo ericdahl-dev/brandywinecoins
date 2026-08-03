@@ -11,7 +11,7 @@ import s from './Sections.module.css';
  */
 export default function About() {
   return (
-    <section id="about" className={s.section}>
+    <section id="about" className={s.section} tabIndex={-1}>
       <div className={s.inner}>
         <StarRule className={s.opener} />
         <h2 className={s.title}>About Us</h2>

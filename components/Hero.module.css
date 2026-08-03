@@ -213,10 +213,15 @@
      margin is what is left over. */
   margin-top: calc(var(--crest-w) * 0.0056);
   font-weight: inherit;
-  line-height: 0;
 }
 
 .wordmark {
+  /* Block, so the image makes no inline line box and the heading needs no
+     line-height: 0 to collapse one. That mattered: the h1's only text is this
+     image's alt, and with the line box zeroed a failed request rendered the
+     business name sliced through the middle. The name is the one thing that has
+     to survive an asset failure. */
+  display: block;
   width: var(--crest-w);
   height: auto;
   /* The source art sets the wordmark off the field with a cast shadow. Sized

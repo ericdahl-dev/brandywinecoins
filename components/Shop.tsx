@@ -4,7 +4,7 @@ import s from './Sections.module.css';
 
 export default function Shop() {
   return (
-    <section id="shop" className={s.section}>
+    <section id="shop" className={s.section} tabIndex={-1}>
       <div className={s.inner}>
         <StarRule className={s.opener} />
         <h2 className={s.title}>Shop</h2>
