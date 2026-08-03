@@ -1,4 +1,12 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
+
+/** boundingBox() gives x/y/width/height; the checks below are about edges. */
+async function edges(locator: Locator, what: string) {
+  const box = await locator.boundingBox();
+  expect(box, `${what} is not in the layout`).not.toBeNull();
+  const { x, y, width, height } = box!;
+  return { left: x, top: y, right: x + width, bottom: y + height };
+}
 
 /**
  * The decorative plate has to stop at the ornamental frame.
@@ -22,25 +30,9 @@ test.describe('decorative plate', () => {
       await page.setViewportSize({ width, height });
       await page.goto('/');
 
-      const rects = await page.evaluate(() => {
-        const hero = document.querySelector('section')!;
-        const kids = Array.from(hero.children) as HTMLElement[];
-        // The plate is the only element carrying the artwork as a background.
-        const plate = kids.find((el) =>
-          getComputedStyle(el).backgroundImage.includes('/art/bg-'),
-        );
-        // The frame's outer ring owns the corner squares, which are the only
-        // things on the page rounded to a full 100%.
-        const corner = hero.querySelector<HTMLElement>('span');
-        const ring = corner?.parentElement ?? null;
-        const box = (el: Element | null) => (el ? el.getBoundingClientRect().toJSON() : null);
-        return { plate: box(plate ?? null), ring: box(ring), hero: box(hero) };
-      });
-
-      expect(rects.plate, 'no element is painting the plate').not.toBeNull();
-      expect(rects.ring, 'no frame ring found').not.toBeNull();
-
-      const { plate, ring, hero } = rects as Record<string, DOMRect>;
+      const plate = await edges(page.getByTestId('hero-plate'), 'the plate');
+      const ring = await edges(page.getByTestId('frame-ring-outer'), 'the outer frame ring');
+      const hero = await edges(page.getByTestId('hero'), 'the hero');
 
       // Contained by the frame, within a rounding pixel.
       expect(plate.left, 'plate bleeds past the left frame line').toBeGreaterThanOrEqual(ring.left - 1);
@@ -67,10 +59,39 @@ test.describe('decorative plate', () => {
  */
 test('the hero supplies the frame inset', async ({ page }) => {
   await page.goto('/');
-  const inset = await page.evaluate(() =>
-    getComputedStyle(document.querySelector('section')!)
-      .getPropertyValue('--frame-inset')
-      .trim(),
-  );
+  const inset = await page
+    .getByTestId('hero')
+    .evaluate((el) => getComputedStyle(el).getPropertyValue('--frame-inset').trim());
   expect(inset, '--frame-inset is not reaching the hero').not.toBe('');
+});
+
+/**
+ * Which plate is loaded, either side of the 47rem switch in Hero.module.css.
+ *
+ * The two are drawn differently -- the landscape one puts its coins in the
+ * corners, the portrait one near the left and right edges -- so `cover` on the
+ * wrong one crops away the part worth keeping. Nothing asserted this before, so
+ * the two were interchangeable as far as the suite was concerned.
+ *
+ * 47rem is 752px at the default root size, and the query is max-width, so 752
+ * is the last portrait width and 753 the first landscape one.
+ */
+test.describe('plate at the breakpoint', () => {
+  for (const [width, expected] of [
+    [753, 'bg-desktop'],
+    [752, 'bg-mobile'],
+    [1440, 'bg-desktop'],
+    [390, 'bg-mobile'],
+  ] as const) {
+    test(`loads ${expected} at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto('/');
+
+      const image = await page
+        .getByTestId('hero-plate')
+        .evaluate((el) => getComputedStyle(el).backgroundImage);
+
+      expect(image, `plate at ${width}px is ${image}`).toContain(expected);
+    });
+  }
 });
