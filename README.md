@@ -47,9 +47,22 @@ Three things in the source art were fixed rather than worked around:
   `<text>` elements depending on Cormorant Garamond. An SVG loaded through
   `<img>` has no access to the parent document's webfonts, so both would have
   silently fallen back to Times New Roman for most visitors. They are now real
-  outlines. Note Google serves Cormorant Garamond as a *variable* font whose
-  default instance is Light 300 — outlines must come from an instance pinned to
-  `wght=600`, or the letterforms are too light and the advances are wrong.
+  outlines.
+- **The wordmark is traced from the artwork, not re-set in a font.** Re-setting
+  it in Cinzel was still a guess, and measuring proves the guess wrong: fitting
+  Cinzel's outlines to each glyph's ink box in `wordmark-alpha.png` needs a
+  horizontal squeeze of ~0.76 on `BRANDYWINE` and ~0.90 on `COINS`, and the
+  artwork lifts the middle small caps 8px clear of the cap baseline (caps sit at
+  y=108, small caps at y=100) — an alignment no plain type setting reproduces.
+  Read together those numbers say the source is Trajan Pro, whose lowercase are
+  ~74% small caps (matching the measured 77/104), with line 1 stretched ~1.2×
+  vertically by whoever drew it. `wordmark.svg` is therefore a curve trace of
+  the supplied alpha — upsampled 4× and lightly blurred first so the fitter sees
+  a smooth edge rather than a 748px staircase — which reproduces the letterforms,
+  the tracking and that raised baseline exactly (IoU 0.987 against the source),
+  and stays crisp at any size. Its gradients are sampled from the artwork's own
+  scanline means rather than eyeballed; the outermost few scanlines are dropped
+  because they are almost all antialiased edge and would paint a false dark rim.
 - **The coins had no alpha.** `coin-left.png` / `coin-right.png` were opaque
   rectangular crops with the navy baked in, which the comp hid behind stacked
   `mask-image` + `mask-composite` gradients. They are now genuine cutouts, so
@@ -74,10 +87,13 @@ it is not authoritative everywhere:
   radius, and the original site's own button used `border-radius: 10px`. The
   build follows the artwork. This also lets buttons and plates use real borders
   and unclipped focus rings.
-- **Small caps are real.** The comp fakes them by shrinking letters mid-word
+- **Small caps are real, and the display face is Cinzel.** The comp specifies
+  Cormorant Garamond and fakes small caps by shrinking letters mid-word
   (`W<span style="font-size:21px">ILMINGTON</span>`), which fragments the
-  accessible name and breaks find-in-page and copy-paste. Cormorant SC is a
-  separate family from Cormorant Garamond and is loaded explicitly.
+  accessible name and breaks find-in-page and copy-paste. The artwork is Trajan;
+  those per-letter spans are imitating Trajan's small caps on lowercase
+  codepoints. Display and UI type is set in Cinzel, a Trajan revival that carries
+  the same small caps for free; prose stays Cormorant Garamond.
 - **No `white-space: nowrap`.** It does not prevent overflow, it guarantees it.
 - **The star ring is static.** The comp generated its 13 stars in
   `componentDidMount`, so the logo did not render without JS.
