@@ -15,7 +15,11 @@ markup for a button to attach to, which is why adding one kept failing.
 
 ## Stack
 
-Next.js 16 (App Router) · TypeScript · CSS Modules · Playwright.
+Next.js 16 (App Router) · TypeScript · CSS Modules · Payload · Postgres · Playwright.
+
+The package is ESM (`"type": "module"`). Payload loads `payload.config.ts`
+through an ESM graph and `require` cannot cross it, so this is not optional.
+That is why `next.config.ts` uses `import.meta.dirname` rather than `__dirname`.
 
 ```bash
 npm run dev        # http://localhost:3000
@@ -24,6 +28,63 @@ npm run build
 npm run lint
 npm run typecheck
 ```
+
+## CMS
+
+Payload runs inside this app rather than beside it, so there is no second service
+to deploy and content is read in a server component rather than over the network.
+Admin is at `/admin`.
+
+`app/` is split into two route groups that never meet:
+
+```
+app/
+  favicon.ico          root segment -- Next requires favicon here, not in a group
+  (frontend)/          the site: layout, page, globals.css, icons, OG image
+  (payload)/           admin panel, REST and GraphQL
+cms/
+  collections/         Users
+  migrations/          schema, by reviewed file rather than inferred on boot
+  payload-types.ts     generated
+```
+
+Two environment variables, both required. See `.env.example`.
+
+```bash
+DATABASE_URI      # Postgres connection string
+PAYLOAD_SECRET    # any long random string; rotating it invalidates sessions
+```
+
+A local database for development:
+
+```bash
+docker run -d --name bw-payload-pg \
+  -e POSTGRES_USER=payload -e POSTGRES_PASSWORD=devpass -e POSTGRES_DB=brandywine \
+  -p 5433:5432 postgres:17-alpine
+```
+
+Schema arrives by migration, never by push. `npm start` runs `payload migrate`
+before `next start`, so a deploy cannot serve traffic against a schema it has not
+applied — and CI runs a Postgres service for the same reason. After changing a
+collection:
+
+```bash
+npm run migrate:create <name>
+npm run migrate            # migrate:status to see what has run
+npm run generate:types     # regenerate cms/payload-types.ts
+npm run generate:importmap # after adding any custom admin component
+```
+
+There is no rich text editor, deliberately. The copy this manages is prose whose
+exact characters matter — an unspaced em dash, curly apostrophes, a closing line
+with no full stop, and the thin spaces and word joiners that typeset the dash. A
+rich text editor stores a node tree and is free to normalise those. Plain text
+fields store what was typed.
+
+Nothing about the artwork is editable. The wordmark and emblem are curve traces
+of the supplied alpha, and the background plates are derived by
+`tools/derive-plates.py` against gradient stops in `Hero.module.css`. There is no
+upload collection to invite otherwise.
 
 ## Deployment
 
