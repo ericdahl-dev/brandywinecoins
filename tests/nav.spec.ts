@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+import { CONTACT_HREF } from '../lib/business';
+
 // Scoped to the nav landmark: #shop deliberately repeats the Get in Touch
 // action, so an unscoped query would be ambiguous by design.
 const nav = (page: import('@playwright/test').Page) =>
@@ -21,7 +23,7 @@ test.describe('primary actions', () => {
 
     await expect(
       nav(page).getByRole('link', { name: 'Get in Touch', exact: true }),
-    ).toHaveAttribute('href', 'mailto:info@brandywinecoins.net');
+    ).toHaveAttribute('href', CONTACT_HREF);
   });
 
   test('About Us and Shop point at sections that exist', async ({ page }) => {

@@ -1,7 +1,9 @@
 import s from './ActionLink.module.css';
 
-export const CONTACT_EMAIL = 'info@brandywinecoins.net';
-export const CONTACT_HREF = `mailto:${CONTACT_EMAIL}`;
+/* Re-exported so existing call sites keep working. The address itself lives in
+   lib/business.ts -- a module about how a link looks should not own the
+   business's email. */
+export { CONTACT_EMAIL, CONTACT_HREF } from '../lib/business';
 
 export default function ActionLink({
   href,

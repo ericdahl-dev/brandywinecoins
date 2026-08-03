@@ -1,3 +1,4 @@
+import { organizationJsonLd } from '@/lib/business';
 import type { Metadata } from 'next';
 import { Cormorant_Garamond, Cinzel } from 'next/font/google';
 import './globals.css';
@@ -57,23 +58,7 @@ export const viewport = {
   themeColor: '#03070F',
 };
 
-// Only claims that can be verified from the existing site. Street address,
-// telephone and openingHours are intentionally absent rather than invented --
-// fabricated NAP data is worse than missing NAP data for local search.
-const localBusiness = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  name: 'Brandywine Coins',
-  description: DESCRIPTION,
-  url: SITE_URL,
-  email: 'info@brandywinecoins.net',
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Wilmington',
-    addressRegion: 'DE',
-    addressCountry: 'US',
-  },
-};
+const jsonLd = organizationJsonLd({ url: SITE_URL, description: DESCRIPTION });
 
 export default function RootLayout({
   children,
@@ -84,7 +69,7 @@ export default function RootLayout({
         {children}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusiness) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </body>
     </html>
