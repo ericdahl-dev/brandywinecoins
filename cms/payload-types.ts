@@ -284,12 +284,9 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface About {
   id: number;
   /**
-   * One entry per paragraph, in order.
+   * The whole section, as one piece. Leave a blank line between paragraphs.
    */
-  paragraphs: {
-    text: string;
-    id?: string | null;
-  }[];
+  body: string;
   /**
    * The closing line. It currently ends without a full stop, deliberately.
    */
@@ -306,12 +303,7 @@ export interface About {
  * via the `definition` "about_select".
  */
 export interface AboutSelect<T extends boolean = true> {
-  paragraphs?:
-    | T
-    | {
-        text?: T;
-        id?: T;
-      };
+  body?: T;
   signoff?: T;
   pullQuote?: T;
   updatedAt?: T;
