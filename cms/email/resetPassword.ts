@@ -11,7 +11,9 @@
  * link is repeated as text underneath the button because plenty of clients will
  * not render the button at all.
  */
-const SERVER_URL = () => process.env.PAYLOAD_SERVER_URL || 'http://localhost:3000';
+// COOLIFY_URL is injected by the platform; the explicit var overrides it.
+const SERVER_URL = () =>
+  process.env.PAYLOAD_SERVER_URL || process.env.COOLIFY_URL || 'http://localhost:3000';
 
 export const resetPasswordSubject = () => 'Reset your Brandywine Coins password';
 

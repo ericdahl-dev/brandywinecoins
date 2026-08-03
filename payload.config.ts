@@ -11,6 +11,18 @@ import { forwardEmailAdapter } from './cms/email/forwardEmail';
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
+ * Where the site actually lives.
+ *
+ * COOLIFY_URL is injected into the container by the platform and already holds
+ * the app's domain, so the deploy does not need a second copy of it that can
+ * drift -- change the domain in Coolify and this follows. PAYLOAD_SERVER_URL is
+ * kept ahead of it as an escape hatch for the day mail should come from
+ * brandywinecoins.net instead.
+ */
+const SERVER_URL =
+  process.env.PAYLOAD_SERVER_URL || process.env.COOLIFY_URL || 'http://localhost:3000';
+
+/**
  * Payload runs inside this Next app rather than beside it, so there is no second
  * service to deploy and content is read in a server component rather than over
  * the network.
@@ -32,9 +44,9 @@ export default buildConfig({
    * Behind Traefik the Host header is not something to trust for this either.
    * One value, set explicitly, per environment.
    */
-  serverURL: process.env.PAYLOAD_SERVER_URL || 'http://localhost:3000',
-  cors: [process.env.PAYLOAD_SERVER_URL || 'http://localhost:3000'],
-  csrf: [process.env.PAYLOAD_SERVER_URL || 'http://localhost:3000'],
+  serverURL: SERVER_URL,
+  cors: [SERVER_URL],
+  csrf: [SERVER_URL],
   admin: {
     user: Users.slug,
     meta: {
