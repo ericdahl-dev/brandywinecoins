@@ -10,17 +10,49 @@
    The two radii differ by exactly the gap, and both arcs share one centre. That
    is the part the previous build got backwards: it shrank the inner radius by
    the gap, which for a concave corner drives the arcs together and then apart
-   again, and is why the corner read as a pinched double curve. */
+   again, and is why the corner read as a pinched double curve.
 
-/* Applied to the frame's host: the positioned element the frame is drawn
-   against. The inset has to be declared up there rather than on .frame, because
-   the hero's plate is cut to the same line and is a *sibling* of the frame --
-   custom properties inherit downward, so a sibling can never read a value .frame
-   declares. Keeping it in this file anyway, and having the host compose it, is
-   what stops it drifting away from the three proportions below that are measured
-   against it. Hero.module.css names this in its `composes`. */
+   Three of those measurements are not what ships, and the differences are
+   deliberate rather than drift, so they are recorded here rather than quietly
+   reconciled:
+
+     outer thickness  measured 0.26%, ships 0.21% -- 4.0px measured against a
+                      3.2px cap, because a 4px gold line reads heavy on screen
+                      at a weight the print original carries comfortably
+     inner thickness  measured 0.065%, ships 0.13% -- the measurement is the
+                      line at its thinnest, 1.0px; the shipped range spans
+                      1.0px to 2.0px so it survives a hairline at low density
+     outer radius     measured 1.37%, ships 1.47% -- 21px against 22.6px
+
+   The inset reconciles once you account for where a line is measured from:
+   1.04% to the line's centre plus half its 0.21% thickness is 1.145%, against
+   1.14% measured.
+
+   Everything below derives from --ref-w and --floor-w. Before, each clamp
+   carried its own copy of the reference width in its upper bound, and they
+   disagreed -- the five implied 1524, 1538, 1538, 1561 and 1565. Worse, the
+   lower bounds saturated at 595, 732, 769, 865 and 884px, so between roughly
+   600 and 900px the five proportions froze one at a time and the frame
+   distorted against itself. One number now, and they stop together. */
+
 .host {
-  --frame-inset: clamp(9px, 1.04vw, 16px);
+  /* The artwork's own width, and the width below which the frame stops
+     shrinking. Every proportion in this file is a fraction of the first and is
+     clamped against both. */
+  --ref-w: 1535;
+  --floor-w: 900;
+
+  --p-inset: 0.0104;
+  --p-gap: 0.0041;
+  --p-radius: 0.0147;
+  --p-outer-w: 0.0021;
+  --p-inner-w: 0.0013;
+
+  --frame-inset: clamp(
+    calc(var(--p-inset) * var(--floor-w) * 1px),
+    calc(var(--p-inset) * 100vw),
+    calc(var(--p-inset) * var(--ref-w) * 1px)
+  );
 }
 
 .frame {
@@ -28,8 +60,16 @@
   inset: 0;
   pointer-events: none;
 
-  --gap: clamp(3px, 0.41vw, 6.4px);
-  --radius: clamp(13px, 1.47vw, 23px);
+  --gap: clamp(
+    calc(var(--p-gap) * var(--floor-w) * 1px),
+    calc(var(--p-gap) * 100vw),
+    calc(var(--p-gap) * var(--ref-w) * 1px)
+  );
+  --radius: clamp(
+    calc(var(--p-radius) * var(--floor-w) * 1px),
+    calc(var(--p-radius) * 100vw),
+    calc(var(--p-radius) * var(--ref-w) * 1px)
+  );
 }
 
 .outer,
@@ -42,7 +82,11 @@
   --r: var(--radius);
   --run: var(--radius);
   --off: 0px;
-  --w: clamp(1.25px, 0.21vw, 3.2px);
+  --w: clamp(
+    calc(var(--p-outer-w) * var(--floor-w) * 1px),
+    calc(var(--p-outer-w) * 100vw),
+    calc(var(--p-outer-w) * var(--ref-w) * 1px)
+  );
   --c: var(--aged-brass);
 }
 
@@ -53,13 +97,23 @@
      The overflow crops it back to the ring, which is exactly where the arc
      should hand over to the straight runs. */
   --r: calc(var(--radius) + var(--gap));
-  /* The inner arc crosses this ring's edge a shade inside the outer radius --
-     sqrt((radius+gap)^2 - gap^2) - gap, about 0.6px at desktop width. Start the
-     runs there, erring long so the two tuck under each other rather than
-     leaving a hairline notch. */
+  /* The inner arc crosses this ring's edge a shade inside the outer radius, at
+     sqrt((radius+gap)^2 - gap^2) - gap. CSS cannot take a square root portably,
+     so 0.2 * gap approximates it.
+
+     Checked rather than assumed, at both ends of the clamp range: exact 21.870
+     against 21.306 at the reference width, and 12.823 against 12.492 at the
+     floor. The approximation is 0.33 to 0.56px short, which starts the runs
+     fractionally early and makes them fractionally long -- the direction that
+     tucks the run under the arc rather than leaving a hairline notch, which is
+     what this wants. */
   --run: calc(var(--radius) - var(--gap) * 0.2);
   --off: calc(-1 * var(--gap));
-  --w: clamp(1px, 0.13vw, 2px);
+  --w: clamp(
+    calc(var(--p-inner-w) * var(--floor-w) * 1px),
+    calc(var(--p-inner-w) * 100vw),
+    calc(var(--p-inner-w) * var(--ref-w) * 1px)
+  );
   /* The same brass as the outer ring, held back to 80%. Derived rather than
      re-typed so a change to the token reaches both rings. */
   --c: color-mix(in srgb, var(--aged-brass) 80%, transparent);
