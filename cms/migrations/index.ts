@@ -2,6 +2,7 @@ import * as migration_20260803_164903_initial from './20260803_164903_initial';
 import * as migration_20260803_170241_about_global from './20260803_170241_about_global';
 import * as migration_20260803_170500_seed_about from './20260803_170500_seed_about';
 import * as migration_20260803_180947_about_one_field from './20260803_180947_about_one_field';
+import * as migration_20260803_184220_user_roles from './20260803_184220_user_roles';
 
 export const migrations = [
   {
@@ -22,6 +23,11 @@ export const migrations = [
   {
     up: migration_20260803_180947_about_one_field.up,
     down: migration_20260803_180947_about_one_field.down,
-    name: '20260803_180947_about_one_field'
+    name: '20260803_180947_about_one_field',
+  },
+  {
+    up: migration_20260803_184220_user_roles.up,
+    down: migration_20260803_184220_user_roles.down,
+    name: '20260803_184220_user_roles'
   },
 ];
