@@ -11,7 +11,7 @@
   overflow: clip;
   /* One source of truth for where the frame sits: Frame reads it too, so the
      plate below can be cut to exactly the same line. */
-  --frame-inset: clamp(10px, 1.4vw, 22px);
+  --frame-inset: clamp(9px, 1.04vw, 16px);
   /* The field the plate was drawn against. It runs full bleed, so the margin
      outside the frame is the right navy rather than black, and a failed image
      request degrades to a colour field rather than a void. */
@@ -41,24 +41,30 @@
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  /* Lift the shadows back to where the original artwork had them. In the same
-     region of both plates the highlights already agree (p95 39.9 against 40.9)
-     but the supplied plate's median sits at 7.8 where full-hero.png has 11.9 --
-     the coins' engraving lives in exactly that range, which is why they read
-     flat. Solving `(v*b - 127.5)*c + 127.5` for both percentiles gives b=0.94,
-     c=0.96: contrast under 1 opens the shadows, brightness under 1 puts the
-     highlights back, so the coins gain relief without the blacks going milky.
-     Measured on the rendered page, this moves the median 8.6 -> 12.7 and
-     leaves p95 at 43.3 -> 44.3. */
-  filter: brightness(0.94) contrast(0.96);
+  /* Held back to the weight the coins have on brandywinecoins.net, whose
+     desktop.jpg is full-hero.png (verified: mean absolute difference 1.9, all
+     of it JPEG). The supplied landscape plate draws its coins warmer and with
+     far more relief than that, so at full strength they compete with the crest.
+
+     Blending toward the gradient underneath is the right knob rather than a
+     tone curve, because the plate's own field is that same navy: the field
+     holds still and only the coins recede. Sampled on the king's face against
+     the original's, 0.6 gives texture (sd) 12.9 against 12.2, warmth (R-B)
+     -10.4 against -10.1, and a clear-field luminance of 16.1 against 16.5.
+     Erring quiet -- coin-minus-field lands at 4.7 where the original has 6.0. */
+  opacity: 0.6;
   pointer-events: none;
 }
 
 /* Portrait plate: the coins sit near the left and right edges, so a landscape
-   plate on a tall screen crops exactly the parts worth keeping. */
+   plate on a tall screen crops exactly the parts worth keeping. It is drawn
+   much flatter than its landscape sibling -- p99 25 against 43 -- so it wants
+   the opposite treatment: full strength, with its shadows opened up. */
 @media (max-width: 47rem) {
   .plate {
     background-image: url('/art/bg-mobile.webp');
+    filter: brightness(0.94) contrast(0.96);
+    opacity: 1;
   }
 }
 
