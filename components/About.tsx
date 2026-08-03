@@ -22,9 +22,13 @@ export default async function About() {
   const payload = await getPayload({ config });
   const about = await payload.findGlobal({ slug: 'about' });
 
-  const paragraphs = (about.paragraphs ?? [])
-    .map((p) => p.text)
-    .filter((t): t is string => Boolean(t));
+  // One field, split on blank lines. The paragraphs are prose, not items:
+  // nothing reads them individually, and five separate boxes is a worse surface
+  // to write five paragraphs in than one is.
+  const paragraphs = (about.body ?? '')
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
 
   return (
     <section id="about" className={s.section} tabIndex={-1}>

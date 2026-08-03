@@ -53,22 +53,15 @@ export const About: GlobalConfig = {
   },
   fields: [
     {
-      name: 'paragraphs',
-      type: 'array',
+      name: 'body',
+      type: 'textarea',
       required: true,
-      minRows: 1,
-      labels: { singular: 'Paragraph', plural: 'Paragraphs' },
       admin: {
-        description: 'One entry per paragraph, in order.',
-        initCollapsed: false,
+        rows: 18,
+        description:
+          'The whole section, as one piece. Leave a blank line between ' +
+          'paragraphs.',
       },
-      fields: [
-        {
-          name: 'text',
-          type: 'textarea',
-          required: true,
-        },
-      ],
     },
     {
       name: 'signoff',
