@@ -1,14 +1,31 @@
+import config from '@payload-config';
+import { getPayload } from 'payload';
+
+import { typeset } from '../lib/typeset';
 import StarRule from './StarRule';
 import s from './Sections.module.css';
 
 /**
- * Mike's copy, set as he sent it (#43).
+ * Mike's copy, edited at /admin and stored as plain text.
  *
- * Two things that look like typos and are not: no full stop after the closing
- * line, matching his note about the period after "patience", and the em dash in
- * "companies—but" is unspaced. Leave both alone.
+ * The typography is applied here rather than kept in the database:
+ * lib/typeset.ts curls the apostrophes and spaces the em dash, so what he types
+ * is ordinary prose and what ships is set properly. That is also why the two
+ * oddities #43 recorded no longer need protecting in this file -- a hand-spaced
+ * dash and a straight apostrophe now render the same as the finished forms.
+ *
+ * The heading stays here. It is Cinzel, whose small caps only replace lowercase
+ * codepoints, so an all-caps value from a text field would silently break it,
+ * and there is no reason for it to change.
  */
-export default function About() {
+export default async function About() {
+  const payload = await getPayload({ config });
+  const about = await payload.findGlobal({ slug: 'about' });
+
+  const paragraphs = (about.paragraphs ?? [])
+    .map((p) => p.text)
+    .filter((t): t is string => Boolean(t));
+
   return (
     <section id="about" className={s.section} tabIndex={-1}>
       <div className={s.inner}>
@@ -16,55 +33,10 @@ export default function About() {
         <h2 className={s.title}>About Us</h2>
 
         <div className={s.prose}>
-          <p>
-            Brandywine Coins was founded from a lifelong passion for numismatics
-            and the belief that every coin has a story worth preserving. What
-            began as a hobby has grown into an independent business dedicated to
-            helping collectors buy, sell, and learn with confidence.
-          </p>
-          <p>
-            Based in Wilmington, Delaware, we specialize in quality American and
-            world coins, with a particular interest in historic European coinage,
-            especially from Northern and Central Europe. You may also notice a
-            number of items that celebrate Delaware’s colonial heritage and the
-            legacy of New Sweden, reflecting the history that helped shape our
-            home state.
-          </p>
-          <p>
-            Whether you’re searching for a single collectible, building a
-            specialized collection, or looking to sell an inherited estate, every
-            customer receives the same honest and respectful service.
-          </p>
-          <p>
-            Because we carefully research every item and personally handle each
-            order, response times may occasionally be a little slower than those
-            of larger companies
-            {/* Thin spaces around the em dash. Unspaced is correct US style
-                but reads cramped in Cormorant, whose em dash is full width and
-                sits tight against the serifs. Hair spaces were too subtle to
-                answer that at the size this ships; a thin space is the standard
-                remedy and visibly opens it.
-
-                The word joiners are what make it safe. A bare thin space is a
-                break opportunity on both sides, so adding one alone would put
-                the dash back at the start of a line -- the thing being fixed.
-                A word joiner either side of the left thin space pins it. The
-                right one is left breakable, because a line may end on a dash.
-
-                Invisible characters as escapes and the dash itself literal, so
-                a reviewer can see what is here. `nowrap` is the other fix and
-                the README rules it out. */}
-            {'\u2060\u2009\u2060—\u2009'}but every customer receives our
-            full attention and care.
-          </p>
-          <p>
-            Whether you’re a seasoned numismatist or purchasing your very first
-            coin, we’re glad you’re here. We look forward to helping you discover
-            the history, artistry, and enjoyment that make coin collecting such a
-            rewarding hobby.
-          </p>
-          {/* No full stop, deliberately. */}
-          <p>Thank you for visiting Brandywine Coins</p>
+          {paragraphs.map((text, i) => (
+            <p key={i}>{typeset(text)}</p>
+          ))}
+          {about.signoff ? <p>{typeset(about.signoff)}</p> : null}
         </div>
 
         <div className={s.spear} aria-hidden="true">
@@ -76,11 +48,7 @@ export default function About() {
           </svg>
         </div>
 
-        {/* Provisional: #43 says the pull quote is Mike's to choose, between this
-            and "the same honest and respectful service". Taking the founding
-            belief because it is the line the rest of the copy hangs off. Swap it
-            when he answers. */}
-        <p className={s.pullQuote}>Every coin has a story worth preserving.</p>
+        {about.pullQuote ? <p className={s.pullQuote}>{typeset(about.pullQuote)}</p> : null}
       </div>
     </section>
   );

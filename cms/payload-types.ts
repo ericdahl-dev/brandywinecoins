@@ -85,8 +85,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    about: About;
+  };
+  globalsSelect: {
+    about: AboutSelect<false> | AboutSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -270,6 +274,49 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * The About section. Write plainly: straight apostrophes and a plain em dash are fine, the site sets them correctly when it renders.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about".
+ */
+export interface About {
+  id: number;
+  /**
+   * One entry per paragraph, in order.
+   */
+  paragraphs: {
+    text: string;
+    id?: string | null;
+  }[];
+  /**
+   * The closing line. It currently ends without a full stop, deliberately.
+   */
+  signoff?: string | null;
+  /**
+   * The gold line under the section. Should be about the business, not about history.
+   */
+  pullQuote?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about_select".
+ */
+export interface AboutSelect<T extends boolean = true> {
+  paragraphs?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  signoff?: T;
+  pullQuote?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

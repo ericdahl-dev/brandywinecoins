@@ -5,6 +5,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres';
 import { buildConfig } from 'payload';
 
 import { Users } from './cms/collections/Users';
+import { About } from './cms/globals/About';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -26,7 +27,7 @@ export default buildConfig({
     },
   },
   collections: [Users],
-  globals: [],
+  globals: [About],
   /* No rich text editor, deliberately.
    *
    * `editor` is optional, and the copy this manages is plain prose whose exact
