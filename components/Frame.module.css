@@ -48,7 +48,9 @@
   --run: calc(var(--radius) - var(--gap) * 0.2);
   --off: calc(-1 * var(--gap));
   --w: clamp(1px, 0.13vw, 2px);
-  --c: rgb(184 134 47 / 80%);
+  /* The same brass as the outer ring, held back to 80%. Derived rather than
+     re-typed so a change to the token reaches both rings. */
+  --c: color-mix(in srgb, var(--aged-brass) 80%, transparent);
   overflow: hidden;
 }
 

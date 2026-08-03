@@ -48,6 +48,8 @@ export const metadata: Metadata = {
   },
 };
 
+// Must track --ink-navy in globals.css. Next wants this at build time, so it
+// cannot read the custom property; keep the two in step by hand.
 export const viewport = {
   themeColor: '#03070F',
 };
