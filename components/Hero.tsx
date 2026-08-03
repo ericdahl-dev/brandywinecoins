@@ -6,6 +6,7 @@ import s from './Hero.module.css';
 export default function Hero() {
   return (
     <section className={s.hero}>
+      <div className={s.plate} aria-hidden="true" />
       <Frame />
 
       <div className={s.crest}>

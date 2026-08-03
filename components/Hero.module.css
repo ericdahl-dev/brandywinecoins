@@ -9,38 +9,46 @@
   min-height: calc(100svh - clamp(48px, 7svh, 72px));
   padding: clamp(28px, 5svh, 56px) clamp(18px, 4vw, 40px);
   overflow: clip;
-  /* Supplied decorative plate: coins with their contact shadows and the ghost
-     watermark, baked in. Cropping this is safe in a way that cropping the old
-     full-composition image was not -- it carries no text and nothing that has
-     to line up with the content. The gradient stays underneath as the fallback
-     the plate was drawn against, so a failed image request degrades to the
-     right colour field rather than to black. */
+  /* One source of truth for where the frame sits: Frame reads it too, so the
+     plate below can be cut to exactly the same line. */
+  --frame-inset: clamp(10px, 1.4vw, 22px);
+  /* The field the plate was drawn against. It runs full bleed, so the margin
+     outside the frame is the right navy rather than black, and a failed image
+     request degrades to a colour field rather than a void. */
   background-color: var(--ink-navy);
-  background-image:
-    url('/art/bg-desktop.webp'),
-    radial-gradient(
-      120% 100% at 50% 34%,
-      var(--field-navy) 0%,
-      var(--field-navy-deep) 46%,
-      var(--ink-navy) 100%
-    );
+  background-image: radial-gradient(
+    120% 100% at 50% 34%,
+    var(--field-navy) 0%,
+    var(--field-navy-deep) 46%,
+    var(--ink-navy) 100%
+  );
+}
+
+/* Supplied decorative plate: coins with their contact shadows and the ghost
+   watermark, baked in. Cropping it is safe in a way that cropping the old
+   full-composition image was not -- it carries no text and nothing that has to
+   line up with the content.
+
+   Inset to the frame rather than run full bleed. On a short landscape viewport
+   `cover` scales the coins up until they cross the frame line and then get
+   sheared off at the section edge, which reads as broken. Cut to the frame,
+   the line lands on the coin instead -- which is what the source artwork does,
+   where the frame is painted straight across the coin. */
+.plate {
+  position: absolute;
+  inset: var(--frame-inset);
+  background-image: url('/art/bg-desktop.webp');
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
+  pointer-events: none;
 }
 
 /* Portrait plate: the coins sit near the left and right edges, so a landscape
    plate on a tall screen crops exactly the parts worth keeping. */
 @media (max-width: 47rem) {
-  .hero {
-    background-image:
-      url('/art/bg-mobile.webp'),
-      radial-gradient(
-        120% 100% at 50% 34%,
-        var(--field-navy) 0%,
-        var(--field-navy-deep) 46%,
-        var(--ink-navy) 100%
-      );
+  .plate {
+    background-image: url('/art/bg-mobile.webp');
   }
 }
 
