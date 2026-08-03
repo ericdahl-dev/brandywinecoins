@@ -7,6 +7,7 @@ export default function Hero() {
   return (
     <section className={s.hero}>
       <div className={s.plate} aria-hidden="true" />
+      <div className={s.ghost} aria-hidden="true" />
       <Frame />
 
       <div className={s.crest}>

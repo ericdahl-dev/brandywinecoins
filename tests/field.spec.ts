@@ -11,10 +11,9 @@ import { test, expect, type Page } from '@playwright/test';
  * Chromium decodes the screenshot for us -- a data: URL into a canvas -- so
  * this needs no image library.
  */
-async function meanLuma(
-  page: Page,
-  clip: { x: number; y: number; width: number; height: number },
-): Promise<number> {
+type Clip = { x: number; y: number; width: number; height: number };
+
+async function luma(page: Page, clip: Clip): Promise<number[]> {
   const png = (await page.screenshot({ clip })).toString('base64');
   return page.evaluate(async (b64) => {
     const img = new Image();
@@ -26,12 +25,22 @@ async function meanLuma(
     const ctx = canvas.getContext('2d')!;
     ctx.drawImage(img, 0, 0);
     const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    let sum = 0;
+    const out: number[] = [];
     for (let i = 0; i < data.length; i += 4) {
-      sum += 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+      out.push(0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2]);
     }
-    return sum / (data.length / 4);
+    return out;
   }, png);
+}
+
+async function meanLuma(page: Page, clip: Clip): Promise<number> {
+  const v = await luma(page, clip);
+  return v.reduce((a, b) => a + b, 0) / v.length;
+}
+
+function percentile(values: number[], p: number): number {
+  const sorted = [...values].sort((a, b) => a - b);
+  return sorted[Math.min(sorted.length - 1, Math.floor((p / 100) * sorted.length))];
 }
 
 // A band immediately inside the top frame line, across the middle of the page:
@@ -91,4 +100,24 @@ test.describe('hero field brightness', () => {
       ).toBeLessThan(2.5);
     });
   }
+});
+
+/**
+ * The ghost watermark in the upper right.
+ *
+ * It shares the plate with the coins, so the opacity the coins want leaves it
+ * at a quarter strength -- which is what happened. The masked second layer
+ * restores it, and this is the guard that it stays restored: measured as how
+ * far the mark rises above the field around it, the live original gives 12.1
+ * and a plate with no ghost layer at all gives 3.1.
+ */
+test('ghost watermark rises off the field', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+
+  const v = await luma(page, { x: 1050, y: 40, width: 370, height: 380 });
+  const excess = percentile(v, 97) - percentile(v, 25);
+
+  expect(excess, `ghost rises ${excess.toFixed(2)} above its field`).toBeGreaterThan(5.5);
+  expect(excess).toBeLessThan(16);
 });

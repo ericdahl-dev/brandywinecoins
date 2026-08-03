@@ -109,6 +109,17 @@ their p99 from 44 to 104. An offset moves the field by its deficit -- about
 rgb(0, 5, 11) at the corner, nothing against a coin sitting at 50-200 -- and
 leaves the coins' contrast where the artist drew it.
 
+It also emits a mask per plate. The ghost watermark and the coins live in the
+same image, so one opacity governs both, and the setting the coins want leaves
+the ghost at a quarter of the strength the original gives it. The mask lets a
+second copy of the plate lift the ghost without touching the coins, and it is
+derived rather than drawn: blurring how far each pixel departs from its local
+field separates them cleanly. Magnitude isolates the coins, whose texture is
+violent; the positive part isolates the ghost, which is a raised mark, from
+empty field. Both terms are needed -- with only the first the mask keeps the
+whole frame, and running the plate at full strength over field that merely
+approximates the gradient reopens the step on the frame line.
+
 The script prints the corrected ring medians sampled from the *encoded* file.
 Those are the numbers the gradient in `Hero.module.css` has to carry: the plate
 is composited over that gradient, so if the two disagree the margin outside the
