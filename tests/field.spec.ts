@@ -70,7 +70,7 @@ test.describe('hero field brightness', () => {
 
       // The plate is inset by exactly the frame inset, so its box locates the
       // frame line without having to resolve a clamp() out of a custom property.
-      const inset = (await page.locator('section > div').first().boundingBox())!.y;
+      const inset = (await page.getByTestId('hero-plate').boundingBox())!.y;
       const x = Math.round(width * 0.3);
       const w = Math.round(width * 0.4);
       const inside = await meanLuma(page, FIELD_BAND(inset, x, w));
@@ -84,7 +84,7 @@ test.describe('hero field brightness', () => {
       await page.setViewportSize({ width, height });
       await page.goto('/');
 
-      const inset = (await page.locator('section > div').first().boundingBox())!.y;
+      const inset = (await page.getByTestId('hero-plate').boundingBox())!.y;
       const x = Math.round(width * 0.3);
       const w = Math.round(width * 0.4);
 
