@@ -30,6 +30,15 @@ function Ring({ variant }: { variant: 'outer' | 'inner' }) {
   );
 }
 
+/**
+ * Renders inside a positioned host that composes `host` from Frame.module.css,
+ * which is where --frame-inset comes from. It cannot be declared on the frame
+ * itself: whatever the frame is drawn around -- the hero's plate today -- is cut
+ * to the same line and is a sibling, and siblings cannot inherit from it.
+ *
+ * Without the host class both rings resolve `inset: auto` and collapse, silently.
+ * tests/plate.spec.ts guards it.
+ */
 export default function Frame() {
   return (
     <div className={s.frame} aria-hidden="true">

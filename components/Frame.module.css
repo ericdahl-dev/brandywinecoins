@@ -11,6 +11,18 @@
    is the part the previous build got backwards: it shrank the inner radius by
    the gap, which for a concave corner drives the arcs together and then apart
    again, and is why the corner read as a pinched double curve. */
+
+/* Applied to the frame's host: the positioned element the frame is drawn
+   against. The inset has to be declared up there rather than on .frame, because
+   the hero's plate is cut to the same line and is a *sibling* of the frame --
+   custom properties inherit downward, so a sibling can never read a value .frame
+   declares. Keeping it in this file anyway, and having the host compose it, is
+   what stops it drifting away from the three proportions below that are measured
+   against it. Hero.module.css names this in its `composes`. */
+.host {
+  --frame-inset: clamp(9px, 1.04vw, 16px);
+}
+
 .frame {
   position: absolute;
   inset: 0;
