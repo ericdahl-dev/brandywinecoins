@@ -2,6 +2,16 @@
    wallpaper, so sections stay unframed and use the star rule as the opener.
    Each gets its own soft vignette rather than tiling the hero's radial, which
    is anchored for the hero's box and would look like a bug if repeated. */
+/* #about and #shop take tabindex="-1" so activating a nav link lands focus in
+   the content rather than leaving it on the link, where the next Tab would
+   carry on through the nav. They are landing points, not controls, and never
+   enter the tab order -- so the UA's own ring, browser blue drawn round a
+   full-width band on a navy field, is noise rather than an affordance. The
+   scroll is the feedback; the fix is where the next Tab goes. */
+.section:focus {
+  outline: none;
+}
+
 .section {
   position: relative;
   padding: clamp(72px, 12svh, 120px) clamp(18px, 4vw, 40px) clamp(80px, 13svh, 128px);
