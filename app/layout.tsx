@@ -24,9 +24,12 @@ const cormorant = Cormorant_Garamond({
 });
 
 const SITE_URL = 'https://bwcoins.ericdahl.dev';
+// The specialty, not a range. "Every grade and price point" said nothing a
+// collector could act on, and it is not what Mike's own copy claims (#43).
 const DESCRIPTION =
-  'Brandywine Coins is a rare coin dealer in Wilmington, Delaware. US and world ' +
-  'coins across every grade and price point. Our collection opens soon.';
+  'Brandywine Coins is a rare coin dealer in Wilmington, Delaware, specializing ' +
+  'in American and world coins and in historic European coinage. ' +
+  'Our collection opens soon.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
