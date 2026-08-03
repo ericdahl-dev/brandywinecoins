@@ -13,8 +13,10 @@ import { test, expect, type Page } from '@playwright/test';
  */
 type Clip = { x: number; y: number; width: number; height: number };
 
-async function luma(page: Page, clip: Clip): Promise<number[]> {
-  const png = (await page.screenshot({ clip })).toString('base64');
+// fullPage matters below the fold: a clip outside the viewport is an error, not
+// a scroll. The section boundaries are the only samples that need it.
+async function luma(page: Page, clip: Clip, fullPage = false): Promise<number[]> {
+  const png = (await page.screenshot({ clip, fullPage })).toString('base64');
   return page.evaluate(async (b64) => {
     const img = new Image();
     img.src = `data:image/png;base64,${b64}`;
@@ -33,8 +35,8 @@ async function luma(page: Page, clip: Clip): Promise<number[]> {
   }, png);
 }
 
-async function meanLuma(page: Page, clip: Clip): Promise<number> {
-  const v = await luma(page, clip);
+async function meanLuma(page: Page, clip: Clip, fullPage = false): Promise<number> {
+  const v = await luma(page, clip, fullPage);
   return v.reduce((a, b) => a + b, 0) / v.length;
 }
 
@@ -120,4 +122,37 @@ test('ghost watermark rises off the field', async ({ page }) => {
 
   expect(excess, `ghost rises ${excess.toFixed(2)} above its field`).toBeGreaterThan(5.5);
   expect(excess).toBeLessThan(16);
+});
+
+/**
+ * The page's sections have to meet without a seam.
+ *
+ * Each section used to restart an opaque vignette at its own top, so one
+ * gradient's dark end butted against the next one's light start and drew a hard
+ * 1px line across the full width: rgb(3,7,15) to rgb(5,13,24) at the about/shop
+ * boundary. Small in absolute terms, and exactly the kind of hard horizontal
+ * edge the eye catches on a near-black field -- it reads as a rendering bug.
+ *
+ * Sampled in a column at the far left, which carries background and nothing
+ * else at every width.
+ */
+test('sections meet without a step', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+
+  const boundaries = await page.evaluate(() =>
+    Array.from(document.querySelectorAll('section'))
+      .map((el) => Math.round(el.getBoundingClientRect().bottom + window.scrollY))
+      .slice(0, -1),
+  );
+  expect(boundaries.length, 'expected at least one section boundary').toBeGreaterThan(0);
+
+  for (const y of boundaries) {
+    const above = await meanLuma(page, { x: 4, y: y - 5, width: 20, height: 3 }, true);
+    const below = await meanLuma(page, { x: 4, y: y + 2, width: 20, height: 3 }, true);
+    expect(
+      Math.abs(above - below),
+      `step of ${Math.abs(above - below).toFixed(2)} at the boundary on y=${y}`,
+    ).toBeLessThan(0.8);
+  }
 });
