@@ -38,8 +38,22 @@ export default function About() {
           <p>
             Because we carefully research every item and personally handle each
             order, response times may occasionally be a little slower than those
-            of larger companies—but every customer receives our full attention
-            and care.
+            of larger companies
+            {/* Hair spaces around the em dash. Unspaced is correct US style but
+                reads cramped in Cormorant, whose em dash is full width and sits
+                tight against the serifs.
+
+                The word joiners are what make it safe. A bare hair space is a
+                break opportunity on both sides, so adding one alone would put
+                the dash back at the start of a line -- the thing being fixed.
+                A word joiner either side of the left hair space pins it. The
+                right one is left breakable, because a line may end on a dash.
+
+                Invisible characters as escapes and the dash itself literal, so
+                a reviewer can see what is here. `nowrap` is the other fix and
+                the README rules it out. */}
+            {'\u2060\u200A\u2060—\u200A'}but every customer receives our
+            full attention and care.
           </p>
           <p>
             Whether you’re a seasoned numismatist or purchasing your very first
