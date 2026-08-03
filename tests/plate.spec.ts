@@ -54,3 +54,23 @@ test.describe('decorative plate', () => {
     });
   }
 });
+
+/**
+ * The frame's rings and the plate are siblings, so both cut to a --frame-inset
+ * that has to come from their shared ancestor. Hero.module.css picks it up by
+ * composing Frame's host class.
+ *
+ * Guarded because the failure mode is quiet: drop the composes and `inset:
+ * var(--frame-inset)` resolves to `auto`, which collapses the rings and the
+ * plate rather than throwing. The geometry checks above do catch that, but they
+ * report it as six failed bounding boxes. This one names the cause.
+ */
+test('the hero supplies the frame inset', async ({ page }) => {
+  await page.goto('/');
+  const inset = await page.evaluate(() =>
+    getComputedStyle(document.querySelector('section')!)
+      .getPropertyValue('--frame-inset')
+      .trim(),
+  );
+  expect(inset, '--frame-inset is not reaching the hero').not.toBe('');
+});

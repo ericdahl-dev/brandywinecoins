@@ -1,4 +1,9 @@
 .hero {
+  /* Declares --frame-inset. The frame's rings and the plate below both cut to
+     it, and they are siblings, so it has to come from their shared ancestor.
+     Composing it keeps the value with the rest of the frame's geometry rather
+     than stranding it here. */
+  composes: host from './Frame.module.css';
   position: relative;
   display: grid;
   place-items: center;
@@ -9,9 +14,6 @@
   min-height: calc(100svh - clamp(48px, 7svh, 72px));
   padding: clamp(28px, 5svh, 56px) clamp(18px, 4vw, 40px);
   overflow: clip;
-  /* One source of truth for where the frame sits: Frame reads it too, so the
-     plate below can be cut to exactly the same line. */
-  --frame-inset: clamp(9px, 1.04vw, 16px);
   /* This gradient is the plate's own field, sampled from the encoded file that
      ships by tools/derive-plates.py -- the encoder shifts these levels by about
      1.5 L, so sampling the array instead would leave a step on the frame line.
