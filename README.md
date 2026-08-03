@@ -66,12 +66,16 @@ docker run -d --name bw-payload-pg \
 Schema arrives by migration, never by push. Both `npm run build` and `npm start`
 run `payload migrate` first, and CI runs a Postgres service for the same reason.
 
-**The build needs the database, not just the runtime.** `/` is prerendered with
-the About copy baked in, so `next build` reads the `about` global. A build
-against an unmigrated database fails with `relation "about" does not exist`,
-which is why `migrate` is part of the build script rather than a step somebody
-remembers. If a deploy target cannot reach Postgres at build time, the fix is to
-render `/` dynamically rather than to drop the migration.
+**The build does not touch the database; the runtime does.** `/` is rendered per
+request rather than prerendered, because nixpacks builds this app in a docker
+build context that is not attached to the database's network -- a build-time
+query fails with `connect ETIMEDOUT`. Prerendering would ship whatever the build
+could see, which is nothing.
+
+Falling back to the committed seed at build time was the other option and is
+worse: every deploy would quietly revert the page to the seed until Mike next
+saved. One query against a database on the same host is cheaper than a class of
+stale-content bug nobody would notice.
 
 After changing a collection:
 

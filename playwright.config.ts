@@ -29,8 +29,13 @@ export default defineConfig({
     // than a dev compile. Most of this suite is layout and computed style --
     // precisely what a dev build can get right while the production one does
     // not, through a different CSS module order or a dropped rule.
+    // `npm start`, not `npx next start`: start is what production runs, and it
+    // migrates before serving. Calling next directly skips that, and the suite
+    // then meets an unmigrated database -- `relation "about" does not exist` --
+    // because the build no longer migrates either. It cannot: the deploy builds
+    // off the database's network. See #41.
     command: process.env.CI
-      ? `npx next start --port ${PORT}`
+      ? `npm start -- --port ${PORT}`
       : `npx next dev --port ${PORT}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
