@@ -88,6 +88,34 @@ Three things in the source art were fixed rather than worked around:
 - **`ghost-watermark.png` was dropped.** It was the emblem, ghosted, so the site
   reuses the emblem SVG at low opacity instead.
 
+### Deriving the background plates
+
+`tools/derive-plates.py` rebuilds `public/art/bg-desktop.webp` and
+`bg-mobile.webp` from the artwork Mike supplied in `assets/backgrounds/`. Run it
+rather than editing the plates by hand -- doing it by hand once is what produced
+issue #13, where nobody could say what had been done to them.
+
+The plates are separate crest-free renders, not derivatives of the composition
+the live site serves, but their vignette is much steeper than it. Measuring the
+field as the median of the darker half of each ring, so coins and watermark do
+not drag it, the corners sit at a third of the original's brightness while the
+centre agrees. The script fits a smooth per-channel radial *offset* -- not a
+gain -- that puts each plate's field ramp onto the live original's.
+
+Additive is the whole point. Whatever darkened these plates left the coins
+alone: they already land within a couple of levels of the original. A gain
+fitted to the field multiplies the coins by up to 4.5x as well, which pushes
+their p99 from 44 to 104. An offset moves the field by its deficit -- about
+rgb(0, 5, 11) at the corner, nothing against a coin sitting at 50-200 -- and
+leaves the coins' contrast where the artist drew it.
+
+The script prints the corrected ring medians sampled from the *encoded* file.
+Those are the numbers the gradient in `Hero.module.css` has to carry: the plate
+is composited over that gradient, so if the two disagree the margin outside the
+frame reads as a different colour from the field inside it. `tests/field.spec.ts`
+asserts both the brightness band and the absence of that step, on rendered
+pixels.
+
 Art references are centralised in `public/art/` so an illustrator's redraw can
 be swapped in without touching component code.
 

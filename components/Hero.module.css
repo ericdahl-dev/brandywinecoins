@@ -12,10 +12,9 @@
   /* One source of truth for where the frame sits: Frame reads it too, so the
      plate below can be cut to exactly the same line. */
   --frame-inset: clamp(9px, 1.04vw, 16px);
-  /* This gradient is the plate's own field, sampled from it: taking the median
-     colour of bg-desktop.webp in rings about its centre (median, so the coins
-     do not drag it) gives #02101B at the centre, #000B16 half way out, #010710
-     at the edge and #010308 in the corners.
+  /* This gradient is the plate's own field, sampled from the encoded file that
+     ships by tools/derive-plates.py -- the encoder shifts these levels by about
+     1.5 L, so sampling the array instead would leave a step on the frame line.
 
      It has to be the plate's own field and not a navy of our choosing, because
      the plate is blended over it: anywhere the two differ, the margin outside
@@ -30,10 +29,10 @@
   background-color: var(--ink-navy);
   background-image: radial-gradient(
     ellipse 71% 71% at 50% 50%,
-    #02101b 0%,
-    #000b16 35%,
-    #010710 71%,
-    #010308 100%
+    #020f1e 0%,
+    #010d1c 35%,
+    #010b16 71%,
+    #010813 100%
   );
 }
 
@@ -70,14 +69,17 @@
 }
 
 /* Portrait plate: the coins sit near the left and right edges, so a landscape
-   plate on a tall screen crops exactly the parts worth keeping. It is drawn
-   much flatter than its landscape sibling -- p99 25 against 43 -- so it wants
-   the opposite treatment: full strength, with its shadows opened up. */
+   plate on a tall screen crops exactly the parts worth keeping. Both plates are
+   now derived onto the same field ramp, so this one no longer needs the tone
+   filter it used to carry, and its own ring medians land within a level of the
+   gradient above -- one gradient covers both. */
 @media (max-width: 47rem) {
   .plate {
     background-image: url('/art/bg-mobile.webp');
-    filter: brightness(0.94) contrast(0.96);
-    opacity: 1;
+    /* Its coins are cropped smaller than the landscape plate's, so the same
+       opacity reads quieter. 0.38 puts the two within a level of each other:
+       spread from p50 to p99 lands on 9.0 against the landscape plate's 10.1. */
+    opacity: 0.38;
   }
 }
 
