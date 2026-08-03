@@ -37,8 +37,19 @@
   box-shadow: 0 0 0 1px var(--ink-navy);
 }
 
+/* Keep the struck edge while focused; a bare ring rule would drop it. */
+.primary:focus-visible {
+  box-shadow: 0 0 0 1px var(--ink-navy), inset 0 1px 0 rgb(255 255 255 / 45%);
+}
+
+/* The edge is where the primary gets its white. The label cannot have it: white
+   measures 1.9:1 against the top of this gradient and 4.6:1 against the bottom,
+   where AA wants 4.5 everywhere, while the ink label runs 10.4:1 down to 5.2:1.
+   A near-white hairline inside the gold reads as the light catching a struck
+   edge, which is the register the mark is in anyway. */
 .primary {
-  border-color: var(--gold-pale);
+  border-color: color-mix(in srgb, var(--silver-leaf) 55%, var(--gold-pale));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 45%);
   background: linear-gradient(180deg, var(--gold-light) 0%, var(--coin-gold) 55%, #9a6c2c 100%);
   color: var(--disc-navy);
 }
@@ -53,21 +64,25 @@
 }
 
 /* Dark wash rather than transparent: the hero sits on a radial gradient, so a
-   see-through control would shift appearance with its vertical position. */
+   see-through control would shift appearance with its vertical position.
+
+   Silver label rather than gold. Against this wash it measures about 19:1 where
+   the gold measured 6.4:1, and it is what lets the primary read as the one gold
+   object in the row -- three gold-lettered controls competed with each other. */
 .secondary {
-  border-color: var(--brass-dim);
+  border-color: rgb(233 235 239 / 34%);
   background: rgb(4 10 20 / 45%);
-  color: var(--coin-gold);
+  color: var(--silver-leaf);
 }
 
 .secondary:hover {
-  border-color: var(--coin-gold);
-  background: rgb(200 150 62 / 8%);
-  color: var(--gold-light);
+  border-color: rgb(233 235 239 / 62%);
+  background: rgb(233 235 239 / 9%);
+  color: #fff;
 }
 
 .secondary:active {
-  background: rgb(200 150 62 / 14%);
+  background: rgb(233 235 239 / 15%);
 }
 
 @media (max-width: 30rem) {

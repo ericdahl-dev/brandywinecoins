@@ -9,10 +9,10 @@ export default function CrestNav({ className }: { className?: string }) {
   return (
     <nav className={[s.nav, className].filter(Boolean).join(' ')} aria-label="Primary">
       <ActionLink href="#about">About Us</ActionLink>
-      <ActionLink href={CONTACT_HREF} variant="primary">
-        Get in Touch
+      <ActionLink href="#shop" variant="primary">
+        Shop
       </ActionLink>
-      <ActionLink href="#shop">Shop</ActionLink>
+      <ActionLink href={CONTACT_HREF}>Get in Touch</ActionLink>
     </nav>
   );
 }

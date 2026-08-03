@@ -40,7 +40,7 @@ export default function Hero() {
 
         <StarRule className={s.rule} />
 
-        <p className={s.patience}>Thank you for your patience.</p>
+        <p className={s.patience}>Thank you for your patience</p>
 
         <CrestNav className={s.nav} />
 
