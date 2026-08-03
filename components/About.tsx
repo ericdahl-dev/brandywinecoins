@@ -39,20 +39,22 @@ export default function About() {
             Because we carefully research every item and personally handle each
             order, response times may occasionally be a little slower than those
             of larger companies
-            {/* Hair spaces around the em dash. Unspaced is correct US style but
-                reads cramped in Cormorant, whose em dash is full width and sits
-                tight against the serifs.
+            {/* Thin spaces around the em dash. Unspaced is correct US style
+                but reads cramped in Cormorant, whose em dash is full width and
+                sits tight against the serifs. Hair spaces were too subtle to
+                answer that at the size this ships; a thin space is the standard
+                remedy and visibly opens it.
 
-                The word joiners are what make it safe. A bare hair space is a
+                The word joiners are what make it safe. A bare thin space is a
                 break opportunity on both sides, so adding one alone would put
                 the dash back at the start of a line -- the thing being fixed.
-                A word joiner either side of the left hair space pins it. The
+                A word joiner either side of the left thin space pins it. The
                 right one is left breakable, because a line may end on a dash.
 
                 Invisible characters as escapes and the dash itself literal, so
                 a reviewer can see what is here. `nowrap` is the other fix and
                 the README rules it out. */}
-            {'\u2060\u200A\u2060—\u200A'}but every customer receives our
+            {'\u2060\u2009\u2060—\u2009'}but every customer receives our
             full attention and care.
           </p>
           <p>
