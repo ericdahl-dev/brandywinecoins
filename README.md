@@ -127,6 +127,21 @@ frame reads as a different colour from the field inside it. `tests/field.spec.ts
 asserts both the brightness band and the absence of that step, on rendered
 pixels.
 
+### Icons and the link preview
+
+`tools/derive-icons.mjs` writes `app/icon.svg`, `app/apple-icon.png`,
+`app/favicon.ico` and `app/opengraph-image.png`, all from the mark and the site
+itself. Run it rather than hand-placing any of them: the scaffold favicon
+shipped with the initial rebuild and sat there unnoticed, Vercel's triangle on a
+site whose whole argument is a hand-traced brand mark.
+
+The icon is the emblem clipped to its disc, which drops the trademark -- it is
+unreadable at 16px and hangs outside the circle. The Apple icon is flattened
+onto the ink navy because iOS ignores alpha and would otherwise composite onto
+white. The preview image is a screenshot of the running site rather than a
+hand-built composition, so it cannot fall out of step with the page; it needs a
+server, and passing a URL argument points it at one other than localhost.
+
 Art references are centralised in `public/art/` so an illustrator's redraw can
 be swapped in without touching component code.
 

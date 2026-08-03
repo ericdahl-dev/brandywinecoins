@@ -10,7 +10,7 @@ export default function Hero() {
   return (
     <section className={s.hero} data-testid="hero">
       <div className={s.plate} aria-hidden="true" data-testid="hero-plate" />
-      <div className={s.ghost} aria-hidden="true" />
+      <div className={s.ghost} aria-hidden="true" data-testid="hero-ghost" />
       <Frame />
 
       <div className={s.crest}>
