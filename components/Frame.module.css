@@ -1,34 +1,58 @@
+/* Geometry read off the live original's own pixels. brandywinecoins.net serves
+   a 1535px-wide image; measuring the gold in its top-left corner gives, as a
+   fraction of that width:
+
+     outer line   1.14% in from the edge, 0.26% thick
+     inner line   1.56% in            , 0.065% thick   (gap 0.42%)
+     both arcs    centred on the frame corner at (17.5, 17.5)
+                  outer radius 21px = 1.37%, inner radius 27.5px = 1.79%
+
+   The two radii differ by exactly the gap, and both arcs share one centre. That
+   is the part the previous build got backwards: it shrank the inner radius by
+   the gap, which for a concave corner drives the arcs together and then apart
+   again, and is why the corner read as a pinched double curve. */
 .frame {
   position: absolute;
   inset: 0;
   pointer-events: none;
+
+  --gap: clamp(3px, 0.41vw, 6.4px);
+  --radius: clamp(13px, 1.47vw, 23px);
 }
 
 .outer,
 .inner {
   position: absolute;
-  inset: var(--inset);
 }
 
-/* --frame-inset comes from .hero, which also cuts the decorative plate to it. */
 .outer {
-  --inset: var(--frame-inset);
-  --r: clamp(13px, 1.56vw, 24px);
-  --w: 1.5px;
+  inset: var(--frame-inset);
+  --r: var(--radius);
+  --run: var(--radius);
+  --off: 0px;
+  --w: clamp(1.25px, 0.21vw, 3.2px);
   --c: var(--aged-brass);
 }
 
 .inner {
-  --gap: clamp(4px, 0.52vw, 8px);
-  --inset: calc(var(--frame-inset) + clamp(4px, 0.52vw, 8px));
-  /* Concentric: the inner arc's centre moves in by the gap, so its radius has
-     to shrink by the same amount or the two curves cross. */
-  --r: calc(clamp(13px, 1.56vw, 24px) - clamp(4px, 0.52vw, 8px));
-  --w: 1px;
-  --c: rgb(184 134 47 / 45%);
+  inset: calc(var(--frame-inset) + var(--gap));
+  /* Same centre as the outer arc, one gap further out -- so the corner square
+     is a gap bigger and sits a gap up and to the left of this ring's own box.
+     The overflow crops it back to the ring, which is exactly where the arc
+     should hand over to the straight runs. */
+  --r: calc(var(--radius) + var(--gap));
+  /* The inner arc crosses this ring's edge a shade inside the outer radius --
+     sqrt((radius+gap)^2 - gap^2) - gap, about 0.6px at desktop width. Start the
+     runs there, erring long so the two tuck under each other rather than
+     leaving a hairline notch. */
+  --run: calc(var(--radius) - var(--gap) * 0.2);
+  --off: calc(-1 * var(--gap));
+  --w: clamp(1px, 0.13vw, 2px);
+  --c: rgb(184 134 47 / 80%);
+  overflow: hidden;
 }
 
-/* Straight runs, inset by the radius so they meet the arcs cleanly. */
+/* Straight runs, held back to where their own ring's arc hands over. */
 .top,
 .right,
 .bottom,
@@ -39,8 +63,8 @@
 
 .top,
 .bottom {
-  left: var(--r);
-  right: var(--r);
+  left: var(--run);
+  right: var(--run);
   height: var(--w);
 }
 
@@ -54,8 +78,8 @@
 
 .left,
 .right {
-  top: var(--r);
-  bottom: var(--r);
+  top: var(--run);
+  bottom: var(--run);
   width: var(--w);
 }
 
@@ -67,9 +91,10 @@
   right: 0;
 }
 
-/* Each corner is a --r square whose inner corner is fully rounded. A 100%
-   radius on an --r box puts the arc's centre on the box's outer corner, which
-   is the frame corner -- giving the concave sweep the artwork has. */
+/* A --r square whose inner corner is rounded to 100% puts the arc's centre on
+   the square's outer corner -- the frame corner -- giving the concave sweep the
+   artwork has. Keeping the corners fixed squares also stops the arcs turning
+   into ellipses on wide viewports, which is what a stretched SVG frame does. */
 .cTL,
 .cTR,
 .cBR,
@@ -80,32 +105,32 @@
 }
 
 .cTL {
-  top: 0;
-  left: 0;
+  top: var(--off);
+  left: var(--off);
   border-right: var(--w) solid var(--c);
   border-bottom: var(--w) solid var(--c);
   border-bottom-right-radius: 100%;
 }
 
 .cTR {
-  top: 0;
-  right: 0;
+  top: var(--off);
+  right: var(--off);
   border-left: var(--w) solid var(--c);
   border-bottom: var(--w) solid var(--c);
   border-bottom-left-radius: 100%;
 }
 
 .cBR {
-  right: 0;
-  bottom: 0;
+  right: var(--off);
+  bottom: var(--off);
   border-left: var(--w) solid var(--c);
   border-top: var(--w) solid var(--c);
   border-top-left-radius: 100%;
 }
 
 .cBL {
-  bottom: 0;
-  left: 0;
+  bottom: var(--off);
+  left: var(--off);
   border-right: var(--w) solid var(--c);
   border-top: var(--w) solid var(--c);
   border-top-right-radius: 100%;

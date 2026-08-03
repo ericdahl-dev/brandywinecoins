@@ -11,7 +11,7 @@
   overflow: clip;
   /* One source of truth for where the frame sits: Frame reads it too, so the
      plate below can be cut to exactly the same line. */
-  --frame-inset: clamp(10px, 1.4vw, 22px);
+  --frame-inset: clamp(9px, 1.04vw, 16px);
   /* The field the plate was drawn against. It runs full bleed, so the margin
      outside the frame is the right navy rather than black, and a failed image
      request degrades to a colour field rather than a void. */
