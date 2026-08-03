@@ -14,14 +14,24 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  reporter: process.env.CI ? 'github' : [['list']],
+  // github annotates the failing lines in the PR; html is what gets uploaded as
+  // an artifact, and is the only way to see a trace after the runner is gone.
+  reporter: process.env.CI
+    ? [['github'], ['html', { open: 'never' }]]
+    : [['list']],
   use: {
     baseURL,
     trace: 'on-first-retry',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: `npx next dev --port ${PORT}`,
+    // CI has already run `next build`, so test the artifact that deploys rather
+    // than a dev compile. Most of this suite is layout and computed style --
+    // precisely what a dev build can get right while the production one does
+    // not, through a different CSS module order or a dropped rule.
+    command: process.env.CI
+      ? `npx next start --port ${PORT}`
+      : `npx next dev --port ${PORT}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
