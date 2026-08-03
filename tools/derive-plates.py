@@ -36,7 +36,7 @@ import urllib.request
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCES = ROOT / 'assets' / 'backgrounds'
@@ -48,9 +48,28 @@ REFERENCE = {
     'mobile': 'https://brandywinecoins.net/assets/mobile.jpg',
 }
 PLATES = {
-    'desktop': ('desktop_background.PNG', 'bg-desktop.webp'),
-    'mobile': ('mobile_background.PNG', 'bg-mobile.webp'),
+    'desktop': ('desktop_background.PNG', 'bg-desktop.webp', 'bg-desktop-mask.webp'),
+    'mobile': ('mobile_background.PNG', 'bg-mobile.webp', 'bg-mobile-mask.webp'),
 }
+
+# Splitting the ghost watermark off the coins. Both live in the same plate, so
+# one opacity governs both, and the setting the coins want leaves the ghost at a
+# quarter of the strength the original gives it. The mask lets a second copy of
+# the plate lift the ghost without touching the coins.
+#
+# It is derived, not drawn, from two blurred views of how each pixel departs
+# from its local field. Magnitude separates the coins, whose texture is violent,
+# from everything else -- median 5.25 to 6.0 over a coin against 1.75 over the
+# ghost and 0.5 over clear sky. The positive part separates the ghost, which is
+# a raised mark, from empty field -- median 1.12 against 0.38 on the top-centre
+# strip. Both terms are needed: without the second the mask would keep the whole
+# frame, and running the plate at full strength over field that only
+# approximately matches the gradient reopens the step on the frame line.
+ACTIVITY_BLUR = (90, 40)     # field estimate, then smoothing of both terms
+MASK_KEEP, MASK_DROP = 2.5, 4.5      # activity: below KEEP all, above DROP none
+GHOST_LO, GHOST_HI = 0.8, 1.8        # positive excess: the raised mark itself
+MASK_GAMMA = 0.45
+MASK_SCALE = 4                       # the mask is smooth; cover interpolates it back
 
 RINGS = 24          # radial bins the gain is fitted over
 FIELD_PCT = 45      # a ring's field is the darker FIELD_PCT% of its pixels
@@ -124,6 +143,35 @@ def correct(plate, reference):
     return out, lift
 
 
+def ghost_mask(img):
+    """White with alpha = 1 away from the coins, 0 over them, soft in between."""
+    a = img.astype(float)
+    lum = 0.2126 * a[..., 0] + 0.7152 * a[..., 1] + 0.0722 * a[..., 2]
+
+    def blur(x, r, scale=1.0):
+        return np.asarray(Image.fromarray(
+            np.clip(x * scale, 0, 255).astype(np.uint8)
+        ).filter(ImageFilter.GaussianBlur(r))).astype(float) / scale
+
+    field = blur(lum, ACTIVITY_BLUR[0])
+    excess = lum - field
+    activity = blur(np.abs(excess), ACTIVITY_BLUR[1], scale=4.0)
+    raised = blur(np.clip(excess, 0, None), ACTIVITY_BLUR[1], scale=8.0)
+    keep = (np.clip((MASK_DROP - activity) / (MASK_DROP - MASK_KEEP), 0, 1)
+            * np.clip((raised - GHOST_LO) / (GHOST_HI - GHOST_LO), 0, 1))
+    keep = blur(keep, 24, scale=255.0)
+    # The ramp leaves the ghost around a third of full weight. Gamma lifts the
+    # middle without touching the zeros, so the mark strengthens and the field
+    # the step depends on stays untouched.
+    keep = keep ** MASK_GAMMA
+
+    small = (a.shape[1] // MASK_SCALE, a.shape[0] // MASK_SCALE)
+    alpha = Image.fromarray(np.round(keep * 255).astype(np.uint8)).resize(small, Image.LANCZOS)
+    out = np.full((small[1], small[0], 4), 255, dtype=np.uint8)
+    out[..., 3] = np.asarray(alpha)
+    return out, keep
+
+
 def hexes(ramp, at=(0.0, 0.35, 0.71, 1.0)):
     rows = []
     for t in at:
@@ -134,7 +182,7 @@ def hexes(ramp, at=(0.0, 0.35, 0.71, 1.0)):
 
 
 def run(dry_run):
-    for key, (src, dst) in PLATES.items():
+    for key, (src, dst, maskdst) in PLATES.items():
         plate = np.asarray(Image.open(SOURCES / src).convert('RGB'))
         with urllib.request.urlopen(REFERENCE[key]) as fh:
             ref = np.asarray(Image.open(io.BytesIO(fh.read())).convert('RGB'))
@@ -162,10 +210,17 @@ def run(dry_run):
         print('   CSS stops, sampled from the encoded file: '
               + ', '.join(h for _, h, _ in hexes(shipped)))
 
+        mask, keep = ghost_mask(fixed)
+        mbuf = io.BytesIO()
+        Image.fromarray(mask).save(mbuf, 'WEBP', quality=90, method=6, exact=True)
+        print(f'   ghost mask keeps {keep.mean() * 100:.0f}% of the frame by weight, '
+              f'{len(mbuf.getvalue()) / 1024:.0f} KB')
+
         if dry_run:
             continue
         (OUT / dst).write_bytes(buf.getvalue())
-        print(f'   wrote {OUT / dst}')
+        (OUT / maskdst).write_bytes(mbuf.getvalue())
+        print(f'   wrote {OUT / dst} and {OUT / maskdst}')
 
 
 if __name__ == '__main__':

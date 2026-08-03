@@ -68,12 +68,53 @@
   pointer-events: none;
 }
 
+/* The ghost watermark, lifted off the coins.
+
+   Both live in the same plate, so the one opacity governs both, and the setting
+   the coins want leaves the ghost at a quarter of the strength the original
+   gives it -- measured on the rendered page, the mark rises 3.1 above its local
+   field where the original rises 12.1.
+
+   This is the same plate again, at the same cover geometry so the two register
+   exactly, masked to everything the coins are not. The mask is derived rather
+   than drawn, by tools/derive-plates.py: blurring how far each pixel departs
+   from its local field separates them cleanly, since the ghost is smooth and
+   low-amplitude where the coins are neither.
+
+   It costs nothing where the plate is field, because the gradient underneath is
+   that same field -- a second copy of the plate over its own field is a no-op.
+   So the mask only has to exclude the coins, not trace the ghost, and this can
+   run fully opaque: the rule is simply that the plate is at full strength
+   everywhere the coins are not. That lands the ghost at 9.7 against the
+   original's 12.1, up from 3.1. */
+.ghost {
+  position: absolute;
+  inset: var(--frame-inset);
+  background-image: url('/art/bg-desktop.webp');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  -webkit-mask-image: url('/art/bg-desktop-mask.webp');
+  mask-image: url('/art/bg-desktop-mask.webp');
+  -webkit-mask-size: cover;
+  mask-size: cover;
+  -webkit-mask-position: center;
+  mask-position: center;
+  pointer-events: none;
+}
+
 /* Portrait plate: the coins sit near the left and right edges, so a landscape
    plate on a tall screen crops exactly the parts worth keeping. Both plates are
    now derived onto the same field ramp, so this one no longer needs the tone
    filter it used to carry, and its own ring medians land within a level of the
    gradient above -- one gradient covers both. */
 @media (max-width: 47rem) {
+  .ghost {
+    background-image: url('/art/bg-mobile.webp');
+    -webkit-mask-image: url('/art/bg-mobile-mask.webp');
+    mask-image: url('/art/bg-mobile-mask.webp');
+  }
+
   .plate {
     background-image: url('/art/bg-mobile.webp');
     /* Its coins are cropped smaller than the landscape plate's, so the same
