@@ -145,6 +145,45 @@
   --rhythm: clamp(0.5rem, 3.4cqi, 1.55rem);
 }
 
+/* Give the crest a height budget, not just a width one.
+
+   Every part of it is a fraction of --crest-w, which came only from inline
+   size, so on a short viewport nothing gave way -- the hero simply grew past
+   the fold and took all three actions with it. At 1366x768 the buttons started
+   811px down a 768px screen; on an 874x360 landscape phone the visitor got two
+   and a half screens of logo before anything to press.
+
+   The nav's bottom lands about 1.11x --crest-w below the hero's top padding, so
+   holding it inside 92% of the viewport gives (0.92 * svh - padding) / 1.11,
+   which is 83svh - 50px. Only above the mobile breakpoint: below it the
+   headline wraps and the buttons stack, so the ratio is nearly twice this and
+   the width cap already binds first. */
+@media (min-width: 47rem) {
+  .crest {
+    --crest-w: min(700px, 100cqi, calc(83svh - 50px));
+    /* The rhythm needs the same treatment. It was driven by inline size alone,
+       so at 874x360 the eight gaps between crest elements came to 174px of a
+       360px viewport -- more than the emblem and wordmark together. */
+    --rhythm: min(clamp(0.5rem, 3.4cqi, 1.55rem), 3.2svh);
+  }
+}
+
+/* Landscape phone. Below about 32rem of height the type and the buttons stop
+   scaling -- they have floors -- so shrinking the mark further only makes it
+   illegible without buying room. Drop the two decorative lines instead: the
+   crest still reads, and all three actions land inside the first screen. */
+@media (max-height: 32rem) and (min-width: 47rem) {
+  .crest {
+    --crest-w: min(700px, 100cqi, calc(70svh - 40px));
+    --rhythm: min(clamp(0.5rem, 3.4cqi, 1.55rem), 2.4svh);
+  }
+
+  .patience,
+  .laurel {
+    display: none;
+  }
+}
+
 .emblem {
   /* The artwork sets the disc at 0.349x the wordmark's ink width. The wordmark
      image is 6% wider than its ink and the emblem's viewBox is 4% wider than
@@ -236,11 +275,11 @@
 }
 
 .nav {
-  margin-top: clamp(20px, 3.4cqi, 34px);
+  margin-top: max(20px, calc(var(--rhythm) * 1.1));
 }
 
 .laurel {
   width: calc(var(--crest-w) * 0.414);
   height: auto;
-  margin-top: clamp(20px, 3.4cqi, 32px);
+  margin-top: max(18px, calc(var(--rhythm) * 1.1));
 }
