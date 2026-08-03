@@ -48,6 +48,12 @@ export default buildConfig({
     // Migrations, not push. The production database is not a scratch pad, and
     // schema has to arrive by a reviewed file rather than by whatever the app
     // inferred on boot.
+    //
+    // push: false is load bearing, not decoration. Left on, the adapter syncs
+    // schema in development and then `payload migrate` notices the drift and
+    // *prompts* -- "data loss will occur, proceed?" -- which in a deploy is not
+    // a failure but a hang, waiting on a stdin nobody is attached to.
+    push: false,
     migrationDir: path.resolve(dirname, 'cms/migrations'),
     pool: {
       connectionString: process.env.DATABASE_URI || '',

@@ -63,10 +63,17 @@ docker run -d --name bw-payload-pg \
   -p 5433:5432 postgres:17-alpine
 ```
 
-Schema arrives by migration, never by push. `npm start` runs `payload migrate`
-before `next start`, so a deploy cannot serve traffic against a schema it has not
-applied — and CI runs a Postgres service for the same reason. After changing a
-collection:
+Schema arrives by migration, never by push. Both `npm run build` and `npm start`
+run `payload migrate` first, and CI runs a Postgres service for the same reason.
+
+**The build needs the database, not just the runtime.** `/` is prerendered with
+the About copy baked in, so `next build` reads the `about` global. A build
+against an unmigrated database fails with `relation "about" does not exist`,
+which is why `migrate` is part of the build script rather than a step somebody
+remembers. If a deploy target cannot reach Postgres at build time, the fix is to
+render `/` dynamically rather than to drop the migration.
+
+After changing a collection:
 
 ```bash
 npm run migrate:create <name>
