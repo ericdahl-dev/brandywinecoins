@@ -14,7 +14,11 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  reporter: process.env.CI ? 'github' : [['list']],
+  // github annotates the failing lines in the PR; html is what gets uploaded as
+  // an artifact, and is the only way to see a trace after the runner is gone.
+  reporter: process.env.CI
+    ? [['github'], ['html', { open: 'never' }]]
+    : [['list']],
   use: {
     baseURL,
     trace: 'on-first-retry',
