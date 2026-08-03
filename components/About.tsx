@@ -2,12 +2,11 @@ import StarRule from './StarRule';
 import s from './Sections.module.css';
 
 /**
- * DRAFT COPY — written from the project brief, not by the owner.
+ * Mike's copy, set as he sent it (#43).
  *
- * Mike should replace or edit this before launch: the New Sweden angle is his
- * and it should sound like him. Historical details used here are accurate
- * (New Sweden was founded in 1638 at Fort Christina, in present-day
- * Wilmington), but the voice is placeholder.
+ * Two things that look like typos and are not: no full stop after the closing
+ * line, matching his note about the period after "patience", and the em dash in
+ * "companies—but" is unspaced. Leave both alone.
  */
 export default function About() {
   return (
@@ -18,23 +17,38 @@ export default function About() {
 
         <div className={s.prose}>
           <p>
-            Brandywine Coins is a coin dealer in Wilmington, Delaware, dealing in
-            United States and world coinage across every grade and price point —
-            from circulated type coins to certified modern issues.
+            Brandywine Coins was founded from a lifelong passion for numismatics
+            and the belief that every coin has a story worth preserving. What
+            began as a hobby has grown into an independent business dedicated to
+            helping collectors buy, sell, and learn with confidence.
           </p>
           <p>
-            The name is local, and so is the history. In 1638 two Swedish ships
-            landed at a rocky outcrop on the Christina River and founded Fort
-            Christina, the first Swedish settlement in North America, on ground
-            that is now Wilmington. New Sweden lasted seventeen years. Its
-            traces — in place names, in land grants, in the families still here —
-            lasted considerably longer.
+            Based in Wilmington, Delaware, we specialize in quality American and
+            world coins, with a particular interest in historic European coinage,
+            especially from Northern and Central Europe. You may also notice a
+            number of items that celebrate Delaware’s colonial heritage and the
+            legacy of New Sweden, reflecting the history that helped shape our
+            home state.
           </p>
           <p>
-            Coins keep that kind of record better than almost anything else.
-            They are small, durable, dated, and they travel. Every one of them
-            was carried by somebody, somewhere, for some reason.
+            Whether you’re searching for a single collectible, building a
+            specialized collection, or looking to sell an inherited estate, every
+            customer receives the same honest and respectful service.
           </p>
+          <p>
+            Because we carefully research every item and personally handle each
+            order, response times may occasionally be a little slower than those
+            of larger companies—but every customer receives our full attention
+            and care.
+          </p>
+          <p>
+            Whether you’re a seasoned numismatist or purchasing your very first
+            coin, we’re glad you’re here. We look forward to helping you discover
+            the history, artistry, and enjoyment that make coin collecting such a
+            rewarding hobby.
+          </p>
+          {/* No full stop, deliberately. */}
+          <p>Thank you for visiting Brandywine Coins</p>
         </div>
 
         <div className={s.spear} aria-hidden="true">
@@ -46,9 +60,11 @@ export default function About() {
           </svg>
         </div>
 
-        <p className={s.pullQuote}>
-          Seventeen years of New Sweden, and the river kept the name.
-        </p>
+        {/* Provisional: #43 says the pull quote is Mike's to choose, between this
+            and "the same honest and respectful service". Taking the founding
+            belief because it is the line the rest of the copy hangs off. Swap it
+            when he answers. */}
+        <p className={s.pullQuote}>Every coin has a story worth preserving.</p>
       </div>
     </section>
   );

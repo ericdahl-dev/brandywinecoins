@@ -168,9 +168,12 @@ it is not authoritative everywhere:
 
 ## Copy
 
-**The `#about` copy in `components/About.tsx` is a draft** written from the
-project brief, not by the owner. The New Sweden history in it is accurate, but
-the voice is placeholder and should be replaced before launch.
+The `#about` copy in `components/About.tsx` is Mike's, set as he sent it. Two
+things in it look like typos and are not: there is no full stop after the closing
+line, and the em dash in "companies—but" is unspaced. Both are deliberate.
+
+The pull quote below it is still provisional. It is his to choose, between the
+line used now and "the same honest and respectful service".
 
 ## Tests
 
