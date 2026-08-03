@@ -17,7 +17,7 @@ import s from './Frame.module.css';
  */
 function Ring({ variant }: { variant: 'outer' | 'inner' }) {
   return (
-    <div className={variant === 'outer' ? s.outer : s.inner}>
+    <div className={variant === 'outer' ? s.outer : s.inner} data-testid={`frame-ring-${variant}`}>
       <span className={s.top} />
       <span className={s.right} />
       <span className={s.bottom} />

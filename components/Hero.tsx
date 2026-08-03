@@ -3,10 +3,13 @@ import Frame from './Frame';
 import StarRule from './StarRule';
 import s from './Hero.module.css';
 
+// The plate and the frame rings are decorative and aria-hidden, so they carry no
+// accessible identity for a test to select on. data-testid is the seam instead:
+// see tests/plate.spec.ts and tests/field.spec.ts.
 export default function Hero() {
   return (
-    <section className={s.hero}>
-      <div className={s.plate} aria-hidden="true" />
+    <section className={s.hero} data-testid="hero">
+      <div className={s.plate} aria-hidden="true" data-testid="hero-plate" />
       <div className={s.ghost} aria-hidden="true" />
       <Frame />
 
