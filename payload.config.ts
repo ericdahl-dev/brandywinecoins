@@ -5,6 +5,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres';
 import { buildConfig } from 'payload';
 
 import { Users } from './cms/collections/Users';
+import { About } from './cms/globals/About';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -26,7 +27,7 @@ export default buildConfig({
     },
   },
   collections: [Users],
-  globals: [],
+  globals: [About],
   /* No rich text editor, deliberately.
    *
    * `editor` is optional, and the copy this manages is plain prose whose exact
@@ -47,6 +48,12 @@ export default buildConfig({
     // Migrations, not push. The production database is not a scratch pad, and
     // schema has to arrive by a reviewed file rather than by whatever the app
     // inferred on boot.
+    //
+    // push: false is load bearing, not decoration. Left on, the adapter syncs
+    // schema in development and then `payload migrate` notices the drift and
+    // *prompts* -- "data loss will occur, proceed?" -- which in a deploy is not
+    // a failure but a hang, waiting on a stdin nobody is attached to.
+    push: false,
     migrationDir: path.resolve(dirname, 'cms/migrations'),
     pool: {
       connectionString: process.env.DATABASE_URI || '',

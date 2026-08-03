@@ -8,8 +8,8 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "payload migrate && next start",
+    "build": "payload migrate --forceAcceptWarning && next build",
+    "start": "payload migrate --forceAcceptWarning && next start",
     "lint": "eslint --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
