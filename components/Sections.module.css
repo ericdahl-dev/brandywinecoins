@@ -1,7 +1,16 @@
 /* The ornate frame is a hero device. Repeating it per section would make it
    wallpaper, so sections stay unframed and use the star rule as the opener.
    Each gets its own soft vignette rather than tiling the hero's radial, which
-   is anchored for the hero's box and would look like a bug if repeated. */
+   is anchored for the hero's box and would look like a bug if repeated.
+
+   The vignette is translucent over a shared base, and its ellipse is centred so
+   it reaches nothing at the top and bottom edges. That is what removes the seam:
+   before, each section restarted an opaque gradient at its own top, so one
+   gradient's dark end butted against the next one's light start and drew a hard
+   1px line across the full width -- rgb(3,7,15) to rgb(5,13,24) at the
+   about/shop boundary. Now every section begins and ends on --field-base, which
+   is also where the hero's field bottoms out, so the boundaries have nothing to
+   show. */
 /* #about and #shop take tabindex="-1" so activating a nav link lands focus in
    the content rather than leaving it on the link, where the next Tab would
    carry on through the nav. They are landing points, not controls, and never
@@ -15,11 +24,12 @@
 .section {
   position: relative;
   padding: clamp(72px, 12svh, 120px) clamp(18px, 4vw, 40px) clamp(80px, 13svh, 128px);
-  background: radial-gradient(
-    90% 70% at 50% 30%,
-    #0b1828 0%,
-    #050e1a 60%,
-    var(--ink-navy) 100%
+  background-color: var(--field-base);
+  background-image: radial-gradient(
+    90% 50% at 50% 50%,
+    rgb(17 34 53 / 62%) 0%,
+    rgb(14 27 42 / 30%) 60%,
+    transparent 100%
   );
   scroll-margin-top: clamp(1rem, 6svh, 4rem);
 }

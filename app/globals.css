@@ -54,6 +54,11 @@ a {
 
 :root {
   --ink-navy: #03070f;
+  /* Where the hero's field bottoms out, sampled from the plate's own corner by
+     tools/derive-plates.py. Everything below the hero sits on this rather than
+     on --ink-navy, so the page reads as one continuous field: the hero's last
+     colour and the first section's first colour are the same value. */
+  --field-base: #010813;
   --disc-navy: #0a1526;
 
   --coin-gold: #c8963e;
@@ -70,7 +75,7 @@ a {
 
 body {
   min-height: 100svh;
-  background: var(--ink-navy);
+  background: var(--field-base);
   color: var(--silver-leaf);
   font-family: var(--font-cormorant), Garamond, 'Times New Roman', serif;
 }

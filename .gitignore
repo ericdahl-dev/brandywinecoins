@@ -48,3 +48,6 @@ next-env.d.ts
 
 # local tooling state
 .gstack/
+
+# scratch scripts run against the repo's own node_modules
+_*.mjs
