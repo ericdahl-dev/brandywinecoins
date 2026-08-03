@@ -10,8 +10,9 @@
   inset: var(--inset);
 }
 
+/* --frame-inset comes from .hero, which also cuts the decorative plate to it. */
 .outer {
-  --inset: clamp(10px, 1.4vw, 22px);
+  --inset: var(--frame-inset);
   --r: clamp(13px, 1.56vw, 24px);
   --w: 1.5px;
   --c: var(--aged-brass);
@@ -19,7 +20,7 @@
 
 .inner {
   --gap: clamp(4px, 0.52vw, 8px);
-  --inset: calc(clamp(10px, 1.4vw, 22px) + clamp(4px, 0.52vw, 8px));
+  --inset: calc(var(--frame-inset) + clamp(4px, 0.52vw, 8px));
   /* Concentric: the inner arc's centre moves in by the gap, so its radius has
      to shrink by the same amount or the two curves cross. */
   --r: calc(clamp(13px, 1.56vw, 24px) - clamp(4px, 0.52vw, 8px));
