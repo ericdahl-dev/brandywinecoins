@@ -21,7 +21,13 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: `npx next dev --port ${PORT}`,
+    // CI has already run `next build`, so test the artifact that deploys rather
+    // than a dev compile. Most of this suite is layout and computed style --
+    // precisely what a dev build can get right while the production one does
+    // not, through a different CSS module order or a dropped rule.
+    command: process.env.CI
+      ? `npx next start --port ${PORT}`
+      : `npx next dev --port ${PORT}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
