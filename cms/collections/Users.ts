@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload';
 
 import { adminOnly, adminOnlyField, adminOrSelf, isAdmin } from '../access';
+import { resetPasswordHTML, resetPasswordSubject } from '../email/resetPassword';
 import type { User } from '../payload-types';
 
 /**
@@ -13,7 +14,12 @@ import type { User } from '../payload-types';
  */
 export const Users: CollectionConfig = {
   slug: 'users',
-  auth: true,
+  auth: {
+    forgotPassword: {
+      generateEmailHTML: (args) => resetPasswordHTML({ token: args?.token ?? '' }),
+      generateEmailSubject: () => resetPasswordSubject(),
+    },
+  },
   admin: {
     useAsTitle: 'email',
     defaultColumns: ['email', 'role', 'updatedAt'],
