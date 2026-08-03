@@ -41,6 +41,16 @@
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
+  /* Lift the shadows back to where the original artwork had them. In the same
+     region of both plates the highlights already agree (p95 39.9 against 40.9)
+     but the supplied plate's median sits at 7.8 where full-hero.png has 11.9 --
+     the coins' engraving lives in exactly that range, which is why they read
+     flat. Solving `(v*b - 127.5)*c + 127.5` for both percentiles gives b=0.94,
+     c=0.96: contrast under 1 opens the shadows, brightness under 1 puts the
+     highlights back, so the coins gain relief without the blacks going milky.
+     Measured on the rendered page, this moves the median 8.6 -> 12.7 and
+     leaves p95 at 43.3 -> 44.3. */
+  filter: brightness(0.94) contrast(0.96);
   pointer-events: none;
 }
 
