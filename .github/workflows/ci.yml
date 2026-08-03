@@ -18,9 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # Read from .nvmrc rather than a literal, so CI cannot drift from the
+      # version the repo declares. engines.node in package.json is what the
+      # nixpacks build reads; the two are kept on the same major deliberately.
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
 
       - run: npm ci
