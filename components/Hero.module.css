@@ -85,7 +85,12 @@
 }
 
 .wordmarkWrap {
-  margin-top: calc(var(--rhythm) * 0.54);
+  /* Off the ruler, not the rhythm: this gap belongs to the lockup, not to the
+     column's vertical spacing. The artwork leaves 1.31% of the wordmark's ink
+     width between the bottom of the disc and the top of the B, and the image
+     already carries 5/192 of its own height as padding above that ink, so the
+     margin is what is left over. */
+  margin-top: calc(var(--crest-w) * 0.0056);
   font-weight: inherit;
   line-height: 0;
 }
