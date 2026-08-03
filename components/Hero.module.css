@@ -12,15 +12,28 @@
   /* One source of truth for where the frame sits: Frame reads it too, so the
      plate below can be cut to exactly the same line. */
   --frame-inset: clamp(9px, 1.04vw, 16px);
-  /* The field the plate was drawn against. It runs full bleed, so the margin
-     outside the frame is the right navy rather than black, and a failed image
-     request degrades to a colour field rather than a void. */
+  /* This gradient is the plate's own field, sampled from it: taking the median
+     colour of bg-desktop.webp in rings about its centre (median, so the coins
+     do not drag it) gives #02101B at the centre, #000B16 half way out, #010710
+     at the edge and #010308 in the corners.
+
+     It has to be the plate's own field and not a navy of our choosing, because
+     the plate is blended over it: anywhere the two differ, the margin outside
+     the frame reads as a different colour from the field inside it. That is
+     what put a visible step on the frame line. Match them and the blend is a
+     no-op on the field, so it only touches the coins -- which is the entire
+     point of blending the plate back in the first place.
+
+     Sized and centred on the plate too: 71% is the half-diagonal, so the last
+     stop lands in the corners rather than short of them. It also still does the
+     job it did before, standing in for the plate if the image fails. */
   background-color: var(--ink-navy);
   background-image: radial-gradient(
-    120% 100% at 50% 34%,
-    var(--field-navy) 0%,
-    var(--field-navy-deep) 46%,
-    var(--ink-navy) 100%
+    ellipse 71% 71% at 50% 50%,
+    #02101b 0%,
+    #000b16 35%,
+    #010710 71%,
+    #010308 100%
   );
 }
 
@@ -41,18 +54,18 @@
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  /* Held back to the weight the coins have on brandywinecoins.net, whose
-     desktop.jpg is full-hero.png (verified: mean absolute difference 1.9, all
-     of it JPEG). The supplied landscape plate draws its coins warmer and with
-     far more relief than that, so at full strength they compete with the crest.
+  /* Held to the intensity the coins have on the portrait plate. The two are not
+     drawn to the same weight: measured over the whole rendered plate with the
+     crest hidden, the portrait one spans p50 16.3 to p99 25.1, and `cover` on a
+     wide box crops the landscape one in less, so its coins come out both bolder
+     and bigger.
 
      Blending toward the gradient underneath is the right knob rather than a
-     tone curve, because the plate's own field is that same navy: the field
-     holds still and only the coins recede. Sampled on the king's face against
-     the original's, 0.6 gives texture (sd) 12.9 against 12.2, warmth (R-B)
-     -10.4 against -10.1, and a clear-field luminance of 16.1 against 16.5.
-     Erring quiet -- coin-minus-field lands at 4.7 where the original has 6.0. */
-  opacity: 0.6;
+     tone curve, because that gradient is the plate's own field: the field holds
+     still and only the coins recede. At 0.3 the spread from p50 to p99 lands on
+     9.7 against the portrait plate's 8.8, and the standard deviation on 3.3
+     against 3.5 -- erring quiet, which is the direction that matters here. */
+  opacity: 0.3;
   pointer-events: none;
 }
 
