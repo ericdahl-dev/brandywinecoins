@@ -1,15 +1,47 @@
+/* Three actions, and the middle one has to sit on the page's centre line.
+   Everything above it is centred on that axis -- emblem, wordmark, locale,
+   headline, star rules, laurel -- so the primary being off it is visible.
+
+   A centred flex row does not do that. It centres the *group*, and because
+   "About Us" is a shorter label than "Get in Touch" the difference pushed Shop
+   about 22 to 25px left at every width.
+
+   A grid of `1fr auto 1fr` inside a `fit-content` box does. Under fit-content
+   the two `1fr` tracks resolve to the widest item among them, so the outer pair
+   come out equal and the middle track lands centred by construction rather than
+   by tuning. Shop keeps its own width, which is what the owner asked for -- it
+   suits the label and gives the primary a little emphasis. */
 .nav {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: clamp(12px, 2vw, 20px);
-  width: 100%;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
 }
 
-@media (max-width: 30rem) {
+/* Stack before the row stops fitting, not after.
+
+   Flex used to wrap in here, which put two buttons on one line and the third
+   alone underneath -- lopsided, and only for the ~20px between where the row
+   stops fitting and where the old 30rem breakpoint took over. A grid does not
+   wrap, so the choice is stack early or overflow.
+
+   Stacking early is also the better layout: three full-width buttons read as a
+   deliberate set, where a 2-then-1 wrap reads as a mistake. */
+@media (max-width: 33rem) {
   .nav {
-    flex-direction: column;
+    /* One column, capped and centred. `justify-content`, not `align-items`:
+       in a grid the latter works on the block axis, so it centres nothing
+       horizontally -- which is what flex's `align-items` did do in column
+       direction, and dropping it silently left-aligned the stack.
+
+       The 280px cap matches ActionLink's own narrow-width rule, so the buttons
+       do not jump width when that takes over further down. */
+    grid-template-columns: min(280px, 100%);
+    justify-content: center;
     gap: 12px;
+    width: 100%;
   }
 }

@@ -54,3 +54,46 @@ test.describe('primary actions', () => {
     }
   });
 });
+
+/**
+ * The primary action sits on the page's centre line.
+ *
+ * Everything above it is centred on that axis, so a primary that is not reads as
+ * a mistake. A centred flex row did not do this: it centres the group, and
+ * because "About Us" is a shorter label than "Get in Touch" the difference put
+ * Shop 22 to 25px left at every width. Caught by the owner with reference lines
+ * over a screenshot, not by this suite, which is why it is now in this suite.
+ */
+test.describe('the primary action is centred', () => {
+  for (const [width, height] of [
+    [1440, 900],
+    [1024, 800],
+    [700, 800],
+    [540, 800],
+  ] as const) {
+    test(`at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height });
+      await page.goto('/');
+
+      const shop = (await nav(page).getByRole('link', { name: 'Shop', exact: true }).boundingBox())!;
+      const centre = shop.x + shop.width / 2;
+
+      expect(
+        Math.abs(centre - width / 2),
+        `Shop's centre is ${centre.toFixed(1)}, page centre is ${width / 2}`,
+      ).toBeLessThan(1.5);
+    });
+  }
+
+  test('the outer two actions are the same width, so the centring is structural', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+    const about = (await nav(page).getByRole('link', { name: 'About Us', exact: true }).boundingBox())!;
+    const touch = (await nav(page).getByRole('link', { name: 'Get in Touch', exact: true }).boundingBox())!;
+    // Equal outer widths are what put the middle track on the centre line. Lose
+    // this and the centring above goes with it.
+    expect(Math.abs(about.width - touch.width)).toBeLessThan(1);
+  });
+});
