@@ -40,7 +40,7 @@ test.describe('decoration and content separation', () => {
   // vacuously. What still matters is that the content column stays inside a
   // centre safe zone, since the corner artwork is what occupies the edges.
   test('content stays within the centre safe zone', async ({ page }) => {
-    for (const width of [768, 1024, 1440, 1920]) {
+    for (const width of [768, 1024, 1440, 1920, 2560]) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto('/');
 

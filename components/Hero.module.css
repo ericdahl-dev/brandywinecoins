@@ -135,13 +135,30 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: min(1000px, 100%);
+  /* Wide enough not to cap the ruler below. Every cqi consumer inside this
+     container is clamped and already sits at its cap by 1000px, so widening it
+     moves nothing except the 100cqi term in --crest-w. */
+  width: min(1400px, 100%);
   text-align: center;
+
+  /* The wordmark's share of the plate, taken from the artwork: the mark is
+     700px of bg-desktop.webp's 1535px width, so 45.6vw.
+
+     This used to be a flat 700px cap, and that was the bug. The plate scales
+     with the viewport under `background-size: cover` while the mark did not, so
+     above ~1535px the two came apart -- 36% of the viewport at 1920, 27% at
+     2560, where the left coin's portrait was taller than the wordmark's caps.
+
+     max(), so 700px is now the floor rather than the ceiling: below 1535 the
+     fixed term is the smaller of the two and binds exactly as before, and above
+     it the viewport term takes over and the coins and the mark grow together.
+     The two are equal at 1535, so there is no step where they swap. */
+  --mark-w: max(700px, 45.6vw);
 
   /* One ruler. Every art element is a fixed fraction of the wordmark width, so
      the composition scales proportionally instead of drifting apart. cqi, not
      vw, so it saturates when the column hits its cap. */
-  --crest-w: min(700px, 100cqi);
+  --crest-w: min(var(--mark-w), 100cqi);
   --rhythm: clamp(0.5rem, 3.4cqi, 1.55rem);
 }
 
@@ -160,7 +177,7 @@
    the width cap already binds first. */
 @media (min-width: 47rem) {
   .crest {
-    --crest-w: min(700px, 100cqi, calc(83svh - 50px));
+    --crest-w: min(var(--mark-w), 100cqi, calc(83svh - 50px));
     /* The rhythm needs the same treatment. It was driven by inline size alone,
        so at 874x360 the eight gaps between crest elements came to 174px of a
        360px viewport -- more than the emblem and wordmark together. */
@@ -174,7 +191,7 @@
    crest still reads, and all three actions land inside the first screen. */
 @media (max-height: 32rem) and (min-width: 47rem) {
   .crest {
-    --crest-w: min(700px, 100cqi, calc(70svh - 40px));
+    --crest-w: min(var(--mark-w), 100cqi, calc(70svh - 40px));
     --rhythm: min(clamp(0.5rem, 3.4cqi, 1.55rem), 2.4svh);
   }
 
@@ -258,11 +275,13 @@
   /* No nowrap. It does not prevent overflow, it guarantees it -- this line is
      ~1000px at full size and would blow through any phone viewport.
 
-     Sized in vw rather than cqi: the crest caps at 1000px but the corner coins
-     scale with the viewport, always occupying its outer ~24%. A crest-relative
-     size therefore stays 980px wide while the clear channel between the coins
-     keeps shrinking, and the line ends up sitting on top of both of them below
-     ~1900px. Tying it to vw keeps it inside the channel at every width. */
+     Sized in vw rather than cqi, and it stays that way. The corner coins always
+     occupy the viewport's outer ~24%, so the clear channel between them is a
+     viewport quantity; a crest-relative size used to sit on top of both coins
+     below ~1900px, because the crest was pinned at 700px while the channel kept
+     shrinking. The crest now tracks the viewport too, but this line is type
+     rather than art -- it has its own 3.875rem cap so it stops growing long
+     before the mark does, and vw is what keeps it inside the channel. */
   font-size: clamp(1.25rem, 3.2vw, 3.875rem);
   line-height: 1.1;
   letter-spacing: 0.015em;
