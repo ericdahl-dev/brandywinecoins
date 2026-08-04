@@ -70,3 +70,48 @@ test.describe('decoration and content separation', () => {
     }
   });
 });
+
+/**
+ * Sections are separated by one interval, not two.
+ *
+ * Stacked, each section's bottom padding met the next one's top padding and the
+ * two summed -- 211px between the pull quote and the Shop star rule at 390px
+ * wide, against 101px between the hero and the About rule. On a phone that read
+ * as a hole rather than as breathing room.
+ *
+ * Asserted as a ratio between the two boundaries rather than against a pixel
+ * value, so changing the padding is free and only reintroducing the doubling
+ * fails.
+ */
+test.describe('vertical rhythm between sections', () => {
+  for (const [width, height] of [
+    [390, 844],
+    [1440, 900],
+  ] as const) {
+    test(`section boundaries match the hero boundary at ${width}px`, async ({ page }) => {
+      await page.setViewportSize({ width, height });
+      await page.goto('/');
+
+      const { heroToAbout, aboutToShop } = await page.evaluate(() => {
+        const y = (el: Element) => el.getBoundingClientRect().top + window.scrollY;
+        const bottom = (el: Element) => el.getBoundingClientRect().bottom + window.scrollY;
+        const hero = document.querySelector('[data-testid="hero"]')!;
+        const about = document.querySelector('#about')!;
+        const shop = document.querySelector('#shop')!;
+        return {
+          heroToAbout: y(about.querySelector('[class*="opener"]')!) - bottom(hero),
+          aboutToShop:
+            y(shop.querySelector('[class*="opener"]')!) -
+            bottom(about.querySelector('[class*="pullQuote"]')!),
+        };
+      });
+
+      // Doubling shows up as a ratio near 2. One interval keeps it near 1.
+      const ratio = aboutToShop / heroToAbout;
+      expect(
+        ratio,
+        `hero->about ${heroToAbout.toFixed(0)}px vs about->shop ${aboutToShop.toFixed(0)}px`,
+      ).toBeLessThan(1.5);
+    });
+  }
+});

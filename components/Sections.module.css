@@ -34,6 +34,25 @@
   scroll-margin-top: clamp(1rem, 6svh, 4rem);
 }
 
+/* The gap between two sections is one interval, not two.
+
+   Stacked, each section put its bottom padding back to back with the next one's
+   top padding, and the two summed: 211px between the pull quote and the Shop
+   star rule at 390px wide, 233px at 430px. On a phone that is a quarter of a
+   screen of nothing, and it reads as a mistake rather than as breathing room --
+   the eye loses the thread between the sections.
+
+   Zeroing the top of a following section leaves the preceding section's bottom
+   padding to do the job on its own, which is what a single interval means. The
+   first section still keeps its top padding, because above it is the hero rather
+   than another section, and that boundary is a different thing.
+
+   Padding rather than margin here, so it cannot collapse and the section's own
+   background continues to cover its full box. */
+.section + .section {
+  padding-top: 0;
+}
+
 .inner {
   container-type: inline-size;
   display: flex;
