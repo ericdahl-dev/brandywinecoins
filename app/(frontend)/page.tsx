@@ -1,6 +1,7 @@
 import Hero from '@/components/Hero';
 import About from '@/components/About';
 import Shop from '@/components/Shop';
+import Footer from '@/components/Footer';
 
 /**
  * Rendered per request rather than prerendered, because About reads the CMS and
@@ -23,10 +24,16 @@ export const dynamic = 'force-dynamic';
 
 export default function Home() {
   return (
-    <main>
-      <Hero />
-      <About />
-      <Shop />
-    </main>
+    <>
+      <main>
+        <Hero />
+        <About />
+        <Shop />
+      </main>
+      {/* Outside <main>, so it is the page's contentinfo landmark rather than
+          part of the main content -- which is what lets a screen reader user
+          jump to the contact details directly. */}
+      <Footer />
+    </>
   );
 }

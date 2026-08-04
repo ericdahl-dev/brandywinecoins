@@ -23,7 +23,17 @@ export const BUSINESS = {
 } as const;
 
 export const CONTACT_EMAIL = BUSINESS.email;
-export const CONTACT_HREF = `mailto:${BUSINESS.email}`;
+
+/**
+ * The subject travels with the link rather than being left to the sender.
+ *
+ * Everything arriving at `info@` is a website enquiry, but only if it says so:
+ * a `mailto:` with no subject arrives blank, and Mike has to open each one to
+ * find out what it is. Encoded, because a raw space in an href is not a valid
+ * URI and Safari drops the parameter rather than fixing it.
+ */
+export const CONTACT_SUBJECT = `Inquiry from ${BUSINESS.name}`;
+export const CONTACT_HREF = `mailto:${BUSINESS.email}?subject=${encodeURIComponent(CONTACT_SUBJECT)}`;
 
 /**
  * Structured data for the site.
