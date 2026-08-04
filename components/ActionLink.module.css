@@ -16,7 +16,9 @@
   border-radius: 10px;
   font-family: var(--font-cinzel), Trajan Pro, Times New Roman, serif;
   font-weight: 600;
-  font-size: clamp(16px, 1.4vw, 18px);
+  /* 17px floor. Same reason as the body copy: on a phone the floor is the size,
+     and these are the labels on the only three things a visitor can act on. */
+  font-size: clamp(17px, 1.4vw, 18px);
   letter-spacing: 0.16em;
   line-height: 1;
   transition: background 180ms ease, border-color 180ms ease, color 180ms ease;

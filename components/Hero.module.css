@@ -273,7 +273,10 @@
 
 .patience {
   margin-top: calc(var(--rhythm) * 0.92);
-  font-size: clamp(0.75rem, 2.3cqi, 1.4375rem);
+  /* 0.875rem floor, not 0.75. On a phone the floor is the size, and 12px was
+     the smallest text on the page -- sitting directly above the actions, where
+     it is read. Only the floor moves. */
+  font-size: clamp(0.875rem, 2.3cqi, 1.4375rem);
   letter-spacing: clamp(0.14em, 0.72cqi, 0.3em);
   text-indent: clamp(0.14em, 0.72cqi, 0.3em);
   color: var(--aged-brass);

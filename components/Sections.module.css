@@ -87,7 +87,13 @@
   max-width: 42rem;
   text-align: left;
   font-weight: 500;
-  font-size: clamp(1.0625rem, 2.1cqi, 1.3125rem);
+  /* 1.1875rem floor, not 1.0625. Every size on a phone sits at its clamp floor,
+     because the fluid term never wins at that width -- so the floor is the
+     mobile size, and 17px was too small for an audience that skews over 50.
+     Cormorant's small x-height makes it read smaller still. Only the floor
+     moves; the fluid range and the cap are untouched, so nothing above roughly
+     700px changes. */
+  font-size: clamp(1.1875rem, 2.1cqi, 1.3125rem);
   line-height: 1.65;
   color: var(--body-text);
 }
@@ -107,7 +113,7 @@
   margin-top: clamp(16px, 2.4cqi, 24px);
   font-weight: 600;
   font-style: italic;
-  font-size: clamp(1.125rem, 2.7cqi, 1.6875rem);
+  font-size: clamp(1.25rem, 2.7cqi, 1.6875rem);
   line-height: 1.4;
   color: var(--coin-gold);
   text-wrap: balance;
@@ -152,7 +158,9 @@
   max-width: 30rem;
   margin-top: clamp(12px, 2cqi, 20px);
   font-weight: 500;
-  font-size: clamp(1rem, 2cqi, 1.25rem);
+  /* Floor raised for the same reason as the prose above: on a phone the floor
+     is the size, and 16px was the smallest body copy on the page. */
+  font-size: clamp(1.125rem, 2cqi, 1.25rem);
   line-height: 1.6;
   color: var(--body-text);
   text-wrap: pretty;
