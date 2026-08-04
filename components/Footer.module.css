@@ -1,0 +1,42 @@
+/* Continues the field rather than closing it off. Every section bottoms out on
+   --field-base, and so does the hero, so a footer with its own darker band
+   would draw the one hard seam the sections were changed to avoid. */
+.footer {
+  background-color: var(--field-base);
+  padding: 0 clamp(18px, 4vw, 40px) clamp(40px, 6svh, 64px);
+}
+
+.inner {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 1.6cqi, 16px);
+  text-align: center;
+}
+
+.email {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-weight: 600;
+  /* Same floor as the body copy. This is the one piece of contact information
+     on the site, read by an audience that skews over 50, and on a phone the
+     clamp floor is the size. */
+  font-size: clamp(1.125rem, 2cqi, 1.25rem);
+  color: var(--coin-gold);
+  text-decoration-color: color-mix(in srgb, var(--coin-gold) 45%, transparent);
+  text-underline-offset: 0.22em;
+}
+
+.email:hover {
+  text-decoration-color: var(--coin-gold);
+}
+
+.legal {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-weight: 500;
+  /* Deliberately the quietest text on the page. It is a claim, not an
+     invitation, and it should not compete with the address above it. */
+  font-size: clamp(0.9375rem, 1.6cqi, 1rem);
+  letter-spacing: 0.01em;
+  color: var(--aged-brass);
+}
