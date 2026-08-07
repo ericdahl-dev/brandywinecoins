@@ -1,0 +1,88 @@
+/* The chat widget, dressed to match the rest of the page.
+
+   Plain CSS rather than a module: the widget mounts itself outside the React
+   tree, so a module's hashed class names would never reach it. These are the
+   variables @n8n/chat reads, set on :root where it can see them.
+
+   Every colour here is an existing token from globals.css. Nothing new is
+   invented -- the composition already decided what navy and what gold. */
+:root {
+  --chat--color--primary: var(--coin-gold);
+  --chat--color--primary-shade-50: var(--gold-light);
+  --chat--color--primary--shade-100: var(--aged-brass);
+  --chat--color--secondary: var(--aged-brass);
+  --chat--color-secondary-shade-50: var(--brass-dim);
+
+  --chat--color-white: var(--disc-navy);
+  --chat--color-light: var(--disc-navy);
+  --chat--color-light-shade-50: rgb(200 150 62 / 22%);
+  --chat--color-light-shade-100: var(--brass-dim);
+  --chat--color-medium: var(--brass-dim);
+  --chat--color-dark: var(--ink-navy);
+  --chat--color-disabled: var(--brass-dim);
+  --chat--color-typing: var(--aged-brass);
+
+  --chat--font-family: var(--font-cormorant), Georgia, serif;
+  --chat--border-radius: 2px;
+  --chat--spacing: 0.9rem;
+
+  --chat--window--width: min(400px, calc(100vw - 2rem));
+  --chat--window--height: min(600px, calc(100svh - 6rem));
+  --chat--window--border: 1px solid rgb(200 150 62 / 30%);
+
+  --chat--header--background: var(--ink-navy);
+  --chat--header--color: var(--gold-pale);
+  --chat--header--border-bottom: 1px solid rgb(200 150 62 / 24%);
+  --chat--heading--font-size: 1.35rem;
+  --chat--subtitle--font-size: 0.95rem;
+  --chat--subtitle--line-height: 1.5;
+
+  /* Same floor as the body copy elsewhere. The audience skews over 50 and this
+     is the one place they have to read and type. */
+  --chat--message--font-size: 1.0625rem;
+  --chat--message-line-height: 1.6;
+  --chat--message--bot--background: var(--disc-navy);
+  --chat--message--bot--color: var(--body-text);
+  --chat--message--bot--border: 1px solid rgb(200 150 62 / 16%);
+  --chat--message--user--background: var(--aged-brass);
+  --chat--message--user--color: var(--ink-navy);
+  --chat--message--user--border: none;
+
+  --chat--toggle--size: 58px;
+  --chat--toggle--background: var(--coin-gold);
+  --chat--toggle--hover--background: var(--gold-light);
+  --chat--toggle--active--background: var(--aged-brass);
+  --chat--toggle--color: var(--ink-navy);
+
+  --chat--input--background: var(--ink-navy);
+  --chat--input--text-color: var(--body-text);
+  --chat--input--font-size: 1.0625rem;
+  --chat--input--border: 1px solid rgb(200 150 62 / 20%);
+}
+
+/* The header sets the tone, so it gets the display face the rest of the page
+   uses for headings rather than the body serif. */
+.n8n-chat .chat-header h1 {
+  font-family: var(--font-cinzel), 'Trajan Pro', 'Times New Roman', serif;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* The widget assumes a light page and leaves its own body white. */
+.n8n-chat .chat-body,
+.n8n-chat .chat-layout {
+  background: var(--field-base);
+}
+
+/* Answers can run long -- a coin with a real story is several paragraphs -- so
+   the window has to scroll comfortably rather than fight the viewport. */
+.n8n-chat .chat-messages-list {
+  overscroll-behavior: contain;
+}
+
+/* Respect a reduced-motion preference: the toggle animates by default. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --chat--transition-duration: 0s;
+  }
+}

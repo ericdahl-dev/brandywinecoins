@@ -2,6 +2,7 @@ import Hero from '@/components/Hero';
 import About from '@/components/About';
 import Shop from '@/components/Shop';
 import Footer from '@/components/Footer';
+import ShopChat from '@/components/ShopChat';
 
 /**
  * Rendered per request rather than prerendered, because About reads the CMS and
@@ -34,6 +35,11 @@ export default function Home() {
           part of the main content -- which is what lets a screen reader user
           jump to the contact details directly. */}
       <Footer />
+
+      {/* Mounts nothing into the layout: the widget attaches itself to the
+          document and floats. Rendered last so it cannot affect the
+          composition above it. */}
+      <ShopChat />
     </>
   );
 }
