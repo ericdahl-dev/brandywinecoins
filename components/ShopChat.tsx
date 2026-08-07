@@ -48,9 +48,21 @@ export default function ShopChat() {
       createChat({
         webhookUrl,
         mode: 'window',
-        // Off, because the session id is per browser session and a returning
-        // visitor reloading into a half-finished conversation reads as the shop
-        // having remembered something it should not.
+        // Off, and worth knowing what that actually does: with this false the
+        // widget mints a NEW session id on every page load and overwrites the
+        // one in localStorage, rather than reusing it. So every visit is its own
+        // session, its own Airtable row and its own n8n message buffer, and the
+        // three cannot drift apart.
+        //
+        // The cost is that a reload mid-conversation starts over. Making a
+        // session survive a reload but expire after a day would need the
+        // widget's session handling overridden, not just configured, and it is
+        // not worth that today.
+        //
+        // If the site ever grows accounts, this stops being a workaround: a
+        // conversation would key off the person rather than the browser, and
+        // continuity across visits becomes something chosen rather than an
+        // accident of localStorage. That is the point to revisit it.
         loadPreviousSession: false,
         // Streaming is OFF, and it is not a preference.
         //
