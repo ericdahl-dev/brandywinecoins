@@ -26,61 +26,157 @@
   --chat--border-radius: 2px;
   --chat--spacing: 0.9rem;
 
-  --chat--window--width: min(400px, calc(100vw - 2rem));
-  --chat--window--height: min(600px, calc(100svh - 6rem));
-  --chat--window--border: 1px solid rgb(200 150 62 / 30%);
+  /* Sit inside the frame, not across it.
+
+     The ornate double rule is the composition's signature, and the window was
+     laid over it flush to the viewport edge -- which read as a third-party
+     script taped over the shop's gilt lettering. The inset is the same clamp
+     Frame.module.css uses, plus a gutter, so the rule stays unbroken at every
+     width. */
+  --bw-frame-inset: clamp(9.4px, 1.04vw, 16px);
+  --chat--window--right: calc(var(--bw-frame-inset) + 1.4rem);
+  --chat--window--bottom: calc(var(--bw-frame-inset) + 1.4rem);
+
+  /* dvh, not vh: iOS Safari's collapsing toolbar would otherwise push the
+     input row off the bottom of the window. */
+  --chat--window--width: min(400px, calc(100vw - 2 * var(--bw-frame-inset) - 1.6rem));
+  --chat--window--height: min(560px, calc(100dvh - 11rem));
+  --chat--window--border: 0;
 
   --chat--header--background: var(--ink-navy);
   --chat--header--color: var(--gold-pale);
   --chat--header--border-bottom: 1px solid rgb(200 150 62 / 24%);
-  --chat--heading--font-size: 1.35rem;
+  --chat--heading--font-size: 1.3rem;
   --chat--subtitle--font-size: 0.95rem;
   --chat--subtitle--line-height: 1.5;
 
-  /* Same floor as the body copy elsewhere. The audience skews over 50 and this
-     is the one place they have to read and type. */
-  --chat--message--font-size: 1.0625rem;
+  /* 18px, the same floor the body copy was raised to. This is the one place on
+     the site where someone reads sustained text, and Cormorant's hairlines
+     disappear on near-black well before the contrast ratio says they should --
+     hence the extra weight below, too. */
+  --chat--message--font-size: 1.125rem;
   --chat--message-line-height: 1.6;
-  --chat--message--bot--background: var(--disc-navy);
+  --chat--message--bot--background: transparent;
   --chat--message--bot--color: var(--body-text);
-  --chat--message--bot--border: 1px solid rgb(200 150 62 / 16%);
-  --chat--message--user--background: var(--aged-brass);
-  --chat--message--user--color: var(--ink-navy);
-  --chat--message--user--border: none;
+  --chat--message--bot--border: none;
+  --chat--message--user--background: var(--disc-navy);
+  --chat--message--user--color: var(--body-text);
+  --chat--message--user--border: 1px solid rgb(200 150 62 / 22%);
 
-  --chat--toggle--size: 58px;
-  --chat--toggle--background: var(--coin-gold);
-  --chat--toggle--hover--background: var(--gold-light);
-  --chat--toggle--active--background: var(--aged-brass);
+  --chat--toggle--size: 54px;
+  --chat--toggle--background: var(--aged-brass);
+  --chat--toggle--hover--background: var(--coin-gold);
+  --chat--toggle--active--background: var(--brass-dim);
   --chat--toggle--color: var(--ink-navy);
 
   --chat--input--background: var(--ink-navy);
   --chat--input--text-color: var(--body-text);
+  /* At least 16px or iOS zooms the whole page on focus. */
   --chat--input--font-size: 1.0625rem;
-  --chat--input--border: 1px solid rgb(200 150 62 / 20%);
+  --chat--input--border: 0;
 }
 
-/* The header sets the tone, so it gets the display face the rest of the page
-   uses for headings rather than the body serif. */
-.n8n-chat .chat-header h1 {
+/* The page's double rule, redrawn around the window.
+
+   Shadows rather than borders, so none of it adds to the layout box and it
+   cannot introduce horizontal scroll. The deep shadow makes the panel read as
+   set down on the composition rather than punched through it. */
+.chat-window {
+  border-radius: 2px;
+  box-shadow:
+    0 0 0 1px rgb(200 150 62 / 45%),
+    0 0 0 4px var(--ink-navy),
+    0 0 0 5px rgb(200 150 62 / 20%),
+    0 28px 64px -16px rgb(0 0 0 / 80%);
+}
+
+/* One surface. The widget assumes a light page and leaves its own body white. */
+.chat-layout,
+.chat-body,
+.chat-input {
+  background: var(--field-base);
+}
+
+.chat-input {
+  border-top: 1px solid rgb(200 150 62 / 18%);
+}
+
+/* The header sets the tone, so it gets the display face the page uses for
+   headings rather than the body serif. */
+.chat-heading {
   font-family: var(--font-cinzel), 'Trajan Pro', 'Times New Roman', serif;
   font-weight: 600;
   letter-spacing: 0.04em;
 }
 
-/* The widget assumes a light page and leaves its own body white. */
-.n8n-chat .chat-body,
-.n8n-chat .chat-layout {
-  background: var(--field-base);
-}
+/* Messages start at the top.
 
-/* Answers can run long -- a coin with a real story is several paragraphs -- so
-   the window has to scroll comfortably rather than fight the viewport. */
-.n8n-chat .chat-messages-list {
+   The widget ships `margin-top: auto` on the list, which pins messages to the
+   bottom of a 560px panel and leaves a few hundred pixels of nothing above
+   them. On a page whose whole argument is that someone took care, that reads as
+   half-loaded software -- and because it is also what you stare at during the
+   ten seconds a reply takes, it is the state seen most often. */
+.chat-messages-list {
+  margin-top: 0;
   overscroll-behavior: contain;
 }
 
-/* Respect a reduced-motion preference: the toggle animates by default. */
+/* Claim the empty space instead of merely shrinking it. The emblem sits low
+   and faint, and incoming messages gradually cover it, so an empty panel reads
+   as letterhead waiting to be written on. */
+.chat-body {
+  background-image: url('/art/emblem.svg');
+  background-repeat: no-repeat;
+  background-position: center 62%;
+  background-size: 132px auto;
+}
+
+/* Bot replies as correspondence with a gilt margin rule, rather than a bubble.
+   Rounded bubbles are the most SaaS-coded shape there is, and they are what
+   made this read as bolted on even once the colours were right. */
+.chat-message-from-bot {
+  border-left: 2px solid rgb(200 150 62 / 45%);
+  padding-left: 0.85rem;
+  font-weight: 500;
+}
+
+.chat-message-from-user {
+  border-radius: 2px;
+}
+
+/* The launcher is demoted to brass rather than the page's full gold, so the
+   Shop button on the centre line keeps the only fully saturated gold.
+
+   It deliberately does NOT hide while the window is open. The obvious way to do
+   that -- `.n8n-chat:has(.chat-window)` -- is wrong: the window is in the DOM
+   whether or not it is open, so that rule makes the toggle permanently
+   invisible and unclickable, and the chat can never be opened at all. */
+.chat-window-toggle {
+  transition: background-color 180ms ease;
+}
+
+/* Three bouncing dots are calibrated for two or three seconds. At ten they read
+   as hung. The animation stays in the DOM because it is what a screen reader is
+   given; it is just not what a sighted visitor is asked to interpret. */
+.chat-message-typing-body {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.chat-message-typing::after {
+  content: 'Checking the ledger';
+  font-style: italic;
+  color: var(--aged-brass);
+  font-size: 1.0625rem;
+}
+
+.chat-message-typing {
+  max-width: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root {
     --chat--transition-duration: 0s;
