@@ -37,6 +37,11 @@ jobs:
     env:
       DATABASE_URI: postgres://payload:postgres@127.0.0.1:5432/brandywine
       PAYLOAD_SECRET: ci-only-secret
+      # Read at build time, so the widget only exists in the bundle if this is
+      # set here. Not a secret -- it reaches every visitor's browser anyway --
+      # and setting it makes CI's build match production's. The tests that would
+      # actually call it are opt-in behind CHAT_E2E, so CI never touches n8n.
+      NEXT_PUBLIC_CHAT_WEBHOOK_URL: https://n8n-bwcoins.ger3.ericdahl.dev/webhook/877d45ca-b394-4b9b-9922-d89a9ba55af3/chat
 
     steps:
       - uses: actions/checkout@v7
