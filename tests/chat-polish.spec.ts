@@ -80,6 +80,31 @@ test.describe('the chat, once opened', () => {
     expect(size, `chat text is ${size}px`).toBeGreaterThanOrEqual(18);
   });
 
+  test('draws the double rule and the gilt margin, both of which the widget can swallow', async ({
+    page,
+  }) => {
+    await openChat(page);
+
+    // Twice now a plain CSS declaration here has been silently discarded: the
+    // widget sets `border: var(--chat--window--border)` on the panel and
+    // `border: var(--chat--message--bot--border)` on each reply, and its own
+    // rules win. Both looked applied in the stylesheet and drew nothing.
+    const rules = await page.evaluate(() => {
+      const win = document.querySelector('.chat-window') as HTMLElement;
+      const bot = document.querySelector('.chat-message-from-bot') as HTMLElement | null;
+      const w = getComputedStyle(win);
+      return {
+        inner: parseFloat(w.borderTopWidth),
+        outer: parseFloat(w.outlineWidth),
+        gilt: bot ? getComputedStyle(bot).boxShadow : '',
+      };
+    });
+
+    expect(rules.inner, 'the inner rule did not draw').toBeGreaterThan(0);
+    expect(rules.outer, 'the outer rule did not draw').toBeGreaterThan(0);
+    expect(rules.gilt, 'replies lost their gilt margin rule').toContain('inset');
+  });
+
   test('sits inside the ornate frame rather than across it', async ({ page }) => {
     await openChat(page);
 

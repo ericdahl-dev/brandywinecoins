@@ -34,14 +34,18 @@
      Frame.module.css uses, plus a gutter, so the rule stays unbroken at every
      width. */
   --bw-frame-inset: clamp(9.4px, 1.04vw, 16px);
-  --chat--window--right: calc(var(--bw-frame-inset) + 1.4rem);
-  --chat--window--bottom: calc(var(--bw-frame-inset) + 1.4rem);
+  --chat--window--right: calc(var(--bw-frame-inset) + 1.6rem);
+  --chat--window--bottom: calc(var(--bw-frame-inset) + 1.6rem);
 
   /* dvh, not vh: iOS Safari's collapsing toolbar would otherwise push the
      input row off the bottom of the window. */
   --chat--window--width: min(400px, calc(100vw - 2 * var(--bw-frame-inset) - 1.6rem));
   --chat--window--height: min(560px, calc(100dvh - 11rem));
-  --chat--window--border: 0;
+  /* The inner of the two rules. Set through the widget's own variable rather
+     than as a border declaration: the widget applies `border:
+     var(--chat--window--border)` itself, which wins, and a plain rule here is
+     silently discarded. */
+  --chat--window--border: 2px solid color-mix(in srgb, var(--aged-brass) 80%, transparent);
 
   --chat--header--background: var(--ink-navy);
   --chat--header--color: var(--gold-pale);
@@ -76,18 +80,28 @@
   --chat--input--border: 0;
 }
 
-/* The page's double rule, redrawn around the window.
-
-   Shadows rather than borders, so none of it adds to the layout box and it
-   cannot introduce horizontal scroll. The deep shadow makes the panel read as
-   set down on the composition rather than punched through it. */
+/* The page's double rule, redrawn around the window. */
 .chat-window {
   border-radius: 2px;
-  box-shadow:
-    0 0 0 1px rgb(200 150 62 / 45%),
-    0 0 0 4px var(--ink-navy),
-    0 0 0 5px rgb(200 150 62 / 20%),
-    0 28px 64px -16px rgb(0 0 0 / 80%);
+
+  /* The page's own double rule, at the page's own proportions.
+
+     Frame.module.css draws an outer ring of 0.0021 of the reference width, a
+     gap of 0.0041 and an inner ring of 0.0013 -- about 3.2px, 6.3px and 2px --
+     with the outer in full aged brass and the inner held back to 80%. So the
+     outer is the heavier, brighter line, and the space between the two is
+     empty: the page shows through it.
+
+     A box-shadow stack cannot do that. Each ring paints over the last, so the
+     gap has to be filled with something, and filling it with ink navy is what
+     made the first attempt read as a thick dark bezel rather than two fine
+     lines. A border plus an offset outline leaves the gap genuinely
+     transparent, and neither affects layout. */
+  outline: 3px solid var(--aged-brass);
+  outline-offset: 6px;
+
+  /* Sets the panel down on the composition rather than punching a hole in it. */
+  box-shadow: 0 28px 64px -16px rgb(0 0 0 / 80%);
 }
 
 /* One surface. The widget assumes a light page and leaves its own body white. */
@@ -119,6 +133,26 @@
 .chat-messages-list {
   margin-top: 0;
   overscroll-behavior: contain;
+
+  /* Room to breathe inside the rule.
+
+     The widget's own spacing puts text almost against the panel edge, which is
+     wrong anywhere but especially here: the gilt margin rule on each reply
+     needs somewhere to sit, and a line of type running into a gold border
+     reads as a layout accident.
+
+     More on the left than the right because the rule lives there, and a deeper
+     floor so the last message never crowds the input. */
+  padding: 1.15rem 1rem 1.6rem 1.35rem;
+}
+
+/* The input keeps the same left margin as the text above it, so the composer
+   lines up with the conversation rather than starting further out. */
+.chat-input {
+  padding-left: 1.35rem;
+  /* The composer sat two pixels off the bottom rule, which crowds it against
+     the gold. This lifts the field rather than the box. */
+  padding-bottom: 0.9rem;
 }
 
 /* Claim the empty space instead of merely shrinking it. The emblem sits low
@@ -135,7 +169,12 @@
    Rounded bubbles are the most SaaS-coded shape there is, and they are what
    made this read as bolted on even once the colours were right. */
 .chat-message-from-bot {
-  border-left: 2px solid rgb(200 150 62 / 45%);
+  /* An inset shadow, not a border. The widget sets `border:
+     var(--chat--message--bot--border)` on the message itself, which wins over
+     any border declared here -- the first version of this rule was silently
+     discarded and the gilt line never drew at all. A shadow sidesteps the
+     conflict entirely. */
+  box-shadow: inset 2px 0 0 rgb(200 150 62 / 45%);
   padding-left: 0.85rem;
   font-weight: 500;
 }
