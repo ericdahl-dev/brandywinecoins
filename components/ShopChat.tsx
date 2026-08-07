@@ -15,11 +15,11 @@ import './ShopChat.css';
  * and takes in estates, so someone who wants a coin he has not listed is worth
  * more than a page view -- today they simply leave.
  *
- * The disclosure in the footer is not decoration. On a one-man dealer's site a
- * visitor reasonably reads "ask me" as Mike himself, and someone weighing up
- * whether to hand over a parent's coin collection deserves to know who they are
- * talking to before they decide. It sits in the footer rather than a first
- * message so it cannot scroll away.
+ * The disclosure is not decoration. On a one-man dealer's site a visitor
+ * reasonably reads "ask me" as Mike himself, and someone weighing up whether to
+ * hand over a parent's coin collection deserves to know who they are talking to
+ * before they decide. It sits in the header subtitle because that is the only
+ * slot the widget keeps on screen -- see the note below.
  *
  * Loaded on the client only, and dynamically. The widget touches `document` as
  * soon as it is imported, so a top-level import would break the server render;
@@ -52,6 +52,18 @@ export default function ShopChat() {
         // visitor reloading into a half-finished conversation reads as the shop
         // having remembered something it should not.
         loadPreviousSession: false,
+        // Streaming is OFF, and it is not a preference.
+        //
+        // The chat trigger only streams when the agent is the node that answers
+        // the request. Here the agent is followed by the extract/shape/save
+        // chain that records the enquiry, so n8n answers from the end of the
+        // flow and returns ordinary JSON. A client set to expect a stream then
+        // renders nothing at all -- the reply arrives and is never shown.
+        //
+        // Getting streaming back means making the agent the responding node,
+        // which means giving up the guarantee that every turn is recorded. The
+        // recording is worth more than the perceived latency: it is the whole
+        // reason the chat exists.
         showWelcomeScreen: false,
         // First person for what the assistant does, third person for Mike.
         // "We will keep an eye out" was a promise software cannot keep, and the
@@ -67,12 +79,17 @@ export default function ShopChat() {
         i18n: {
           en: {
             title: BUSINESS.name,
-            subtitle: 'Ask what is in the case.',
-            // Persistent, so it cannot scroll away like a first message would.
-            // Two jobs: say plainly that this is not Mike, and keep a way to
-            // reach an actual person on screen at all times, so the chat is
-            // never the only road.
-            footer: `Automated assistant. Mike reads everything it collects — or write to him at ${CONTACT_EMAIL}`,
+            // The disclosure lives in the subtitle because it is the only slot
+            // that is genuinely persistent. i18n.footer looks like the obvious
+            // home for it and is a trap: the widget only renders that on the
+            // welcome screen, which is switched off here, so it never appeared
+            // at all. A first message would scroll away, which is no better.
+            //
+            // Two jobs, and both have to survive: say plainly this is not Mike,
+            // and keep a route to an actual person on screen at all times so
+            // the chat is never the only road.
+            subtitle: `Automated assistant — Mike reads everything it collects. ${CONTACT_EMAIL}`,
+            footer: '',
             getStarted: 'New conversation',
             // A concrete example teaches the format and shows the catalogue is
             // searchable to that depth. The estate path is in the greeting, so
