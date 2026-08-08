@@ -51,6 +51,31 @@ as the field-tested JS. The page detects the bridge's presence and shows a
 Scan button; the same HTML file keeps working in plain Safari without it, so
 the browser version never dies and remains the fallback.
 
+## The defining workflow: the two-pass session
+
+The reason this app exists is not "the splitter plus a scan button." It is
+that fronts and backs are two scanner passes, and a flipped coin stays in its
+spot on the glass.
+
+The web tool, even with the #77 fixes, sees two unrelated file drops and
+stitches them with heuristics -- copy IDs by reading order, warn on filename
+collisions. If pass two detects 29 coins where pass one found 30, reading
+order shifts and every ID after the gap pairs wrong.
+
+The app owns the loop as a session:
+
+1. **Scan fronts** -- coins detected, Mike types each Inventory ID once
+2. *"Flip each coin in place, then press Scan backs"*
+3. **Scan backs** -- each back matched to its front **by position on the
+   glass**, with diameter agreement (~0.2 mm) as the check; IDs and angles
+   carried over, side set to Back, zero typing
+4. Export: 60 correctly paired files and one manifest
+
+A missed detection does not cascade: position matching leaves exactly one
+unpaired coin, flagged, instead of shifting every pairing after it. This is
+the workflow the web version structurally cannot have, and it is the success
+test at the bottom of this file made concrete.
+
 ## Native surface, in build order
 
 1. **Shell.** Xcode project, WKWebView loading the bundled HTML, bridge
