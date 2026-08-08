@@ -63,6 +63,22 @@ test('logged out, the splitter URL is a login redirect that leaks no tool', asyn
   expect(body).not.toContain('Scan Splitter v');
 });
 
+test('logged out, next-id answers 401 and carries no ID', async ({
+  request,
+}) => {
+  // The prefill proxy (#86). Unauthenticated must be a clean JSON 401 -- and
+  // by construction the route only calls n8n after auth passes, so this also
+  // exercises the no-upstream-call path. The authed path needs a real login
+  // and the shared secret, neither of which CI has; it is verified manually
+  // against a dev server (see #86).
+  const response = await request.get('/admin/tools/split/next-id');
+
+  expect(response.status()).toBe(401);
+  const body = await response.text();
+  expect(body).not.toContain('BWC-');
+  expect(body).not.toContain('nextId');
+});
+
 test('the old unauthenticated URL is gone', async ({ request }) => {
   const response = await request.get('/tools/split.html');
   expect(response.status()).toBe(404);
