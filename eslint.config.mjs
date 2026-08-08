@@ -21,6 +21,9 @@ const eslintConfig = defineConfig([
     "cms/migrations/**",
     "cms/payload-types.ts",
     "app/(payload)/admin/importMap.js",
+    // Written by tools/scan-splitter/package.sh: the splitter's HTML as a
+    // stringified module. Same deal as the generators above.
+    "app/(payload)/admin/tools/split/split-html.ts",
   ]),
 ]);
 
