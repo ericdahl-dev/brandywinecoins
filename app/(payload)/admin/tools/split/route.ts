@@ -25,10 +25,17 @@ export async function GET(request: Request) {
   if (!user) {
     // The redirect param is honoured by Payload's login view, so Mike lands
     // back on the tool after signing in instead of on the dashboard.
-    return Response.redirect(
-      new URL('/admin/login?redirect=%2Fadmin%2Ftools%2Fsplit', request.url),
-      302,
-    );
+    //
+    // A relative Location, deliberately. Building an absolute URL from
+    // request.url looked right in dev and shipped a bug: behind Traefik,
+    // Next reconstructs the request origin as localhost:3000, and the
+    // browser was sent there verbatim. A relative Location (valid since
+    // RFC 7231) resolves against whatever host the browser is actually on,
+    // in every environment, with nothing to reconstruct.
+    return new Response(null, {
+      status: 302,
+      headers: { Location: '/admin/login?redirect=%2Fadmin%2Ftools%2Fsplit' },
+    });
   }
 
   return new Response(splitterHtml, {
