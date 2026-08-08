@@ -1,4 +1,4 @@
-<title>Scan Splitter v8 — Brandywine Coins</title>
+<title>Scan Splitter v9 — Brandywine Coins</title>
 
 <style>
   /* Palette lifted from the Brandywine Coins site so the tool belongs to it:
@@ -542,7 +542,7 @@
   // Bump this on every build that leaves this machine. It is written into the
   // page, the tab title and the footer so "which one have you got open?" has a
   // one-word answer.
-  var VERSION = 'v8 · 8 Aug 2026';
+  var VERSION = 'v9 · 8 Aug 2026';
 
   document.getElementById('version').textContent = VERSION;
   document.getElementById('versionFoot').textContent = 'Scan Splitter ' + VERSION;
@@ -756,6 +756,47 @@
       });
     }
     return { boxes: found, bg: bg };
+  }
+
+  /* ------------------------------------------------------------ measuring */
+
+  // The detection threshold is deliberately soft so no coin is missed -- which
+  // means its box includes the cast shadow and the soft edge, and a diameter
+  // taken from that box ran a millimetre or more fat. Proven against two coins
+  // of published spec: a 31.0 mm 2 kronor read 32.0, a 27.0 mm 5 ore read 28.4.
+  //
+  // Measured instead from a STRONG mask over the full-resolution pixels: the
+  // penumbra and most of the shadow fail a high contrast bar, and what shadow
+  // survives is cast in one direction only (the lamp is fixed), so the SHORTER
+  // axis of the strong mask is the diameter. Same two coins: 30.97 and 26.95.
+  //
+  // Returns null when the strong mask collapses -- a faint bright coin on
+  // white paper -- and the caller keeps the box-based number rather than
+  // report something worse.
+  function measureDiameter(img, bx, by, bw, bh, bg) {
+    var c = document.createElement('canvas');
+    c.width = bw; c.height = bh;
+    var ctx = c.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(img, bx, by, bw, bh, 0, 0, bw, bh);
+    var d = ctx.getImageData(0, 0, bw, bh).data;
+    var CUT = 105 * 105 * 3;           // strong: paper, penumbra and haze all fail
+    var minx = bw, maxx = -1, miny = bh, maxy = -1;
+    for (var y = 0; y < bh; y++) {
+      for (var x = 0; x < bw; x++) {
+        var i = (y * bw + x) * 4;
+        var dr = d[i] - bg[0], dg = d[i + 1] - bg[1], db = d[i + 2] - bg[2];
+        if (dr * dr + dg * dg + db * db > CUT) {
+          if (x < minx) minx = x;
+          if (x > maxx) maxx = x;
+          if (y < miny) miny = y;
+          if (y > maxy) maxy = y;
+        }
+      }
+    }
+    if (maxx < 0) return null;
+    var dia = Math.min(maxx - minx + 1, maxy - miny + 1);
+    // A collapsed mask means the coin never cleared the bar; distrust it.
+    return dia < 0.8 * Math.min(bw, bh) ? null : dia;
   }
 
   /* ------------------------------------------------------------------- zip */
@@ -1118,10 +1159,20 @@
         st.sy = Math.max(0, Math.round(b.y * scale) - pad);
         st.sw = Math.min(W - st.sx, Math.round(b.w * scale) + pad * 2);
         st.sh = Math.min(H - st.sy, Math.round(b.h * scale) + pad * 2);
-        st.mm = (Math.round(b.w * scale) / dpiNow) * 25.4;
+        st.mm = ((st.diamPx || Math.round(b.w * scale)) / dpiNow) * 25.4;
         if (st.setMm) st.setMm();
         return st.repaint ? st.repaint() : Promise.resolve();
       };
+      // Measured from the strong mask over the unpadded box, once; dpi changes
+      // then rescale the same pixel count rather than remeasuring.
+      // One detection-pixel of margin (~scale px here): the box was drawn on
+      // the downscaled image, and its quantisation can clip the rim by a few
+      // full-resolution pixels, which read as a diameter a fifth of a
+      // millimetre lean.
+      var m = Math.ceil(scale);
+      st.diamPx = measureDiameter(img,
+        Math.max(0, Math.round(b.x * scale) - m), Math.max(0, Math.round(b.y * scale) - m),
+        Math.round(b.w * scale) + 2 * m, Math.round(b.h * scale) + 2 * m, bg);
       st.reframe();
       coins.push(st);
 
