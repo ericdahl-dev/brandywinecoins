@@ -1,15 +1,14 @@
 # Scan Splitter
 
-The standalone coin-scan splitting tool Mike uses. `coin-splitter.html` is the
-source (artifact-style, no doctype); the file actually sent to him is wrapped:
+The coin-scan splitting tool Mike uses. `coin-splitter.html` is the source;
+`./package.sh` generates the two forms that leave this repo:
 
-    { echo '<!doctype html>'
-      echo '<html lang="en"><head><meta charset="utf-8">'
-      echo '<meta name="viewport" content="width=device-width, initial-scale=1">'
-      echo '</head><body style="margin:0">'
-      cat coin-splitter.html
-      echo '</body></html>'
-    } > "Coin Scan Splitter.html"
+- `public/tools/split.html` — the hosted copy, live at `/tools/split.html`
+  on the site (unlinked; Mike bookmarks it). Generated, never hand-edited:
+  `tests/splitter-hosted.spec.ts` fails CI if the source changes without
+  this being regenerated.
+- `Coin Scan Splitter.html` — the sendable standalone file, for offline use
+  or when the site is unreachable.
 
 Must be opened in **Safari** when the scans are HEIC — no other Mac browser
 decodes them. Bump `VERSION` in the script on every build that leaves this

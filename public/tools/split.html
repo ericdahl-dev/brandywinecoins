@@ -1,0 +1,1311 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head><body style="margin:0">
+<title>Scan Splitter v8 — Brandywine Coins</title>
+
+<style>
+  /* Palette lifted from the Brandywine Coins site so the tool belongs to it:
+     deep navy field, aged brass, silver leaf. Semantic colors are drawn from
+     what metal actually does -- verdigris for done, oxide for trouble -- so
+     they never compete with the brass accent. */
+  :root {
+    --field:        #010813;
+    --plate:        #0a1526;
+    --plate-2:      #0d1c30;
+    --rule:         #1d2c44;
+    --brass:        #b8862f;
+    --brass-lit:    #e3b569;
+    --brass-dim:    #8a6a3c;
+    --silver:       #e9ebef;
+    --body:         #c9d2de;
+    --muted:        #7f8ea3;
+    --verdigris:    #4f9c86;
+    --oxide:        #b4553f;
+    --bed:          #060e1b;
+
+    --serif: 'Hoefler Text', Baskerville, Garamond, 'Times New Roman', serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    --mono: 'SF Mono', ui-monospace, Menlo, monospace;
+
+    --step-0: 1.0625rem;
+    --step-1: 1.25rem;
+    --step-2: 1.75rem;
+    --step-3: 2.5rem;
+  }
+
+  /* A daylight version, because he will be using this next to a scanner with
+     the blinds open. Warm parchment rather than a naive inversion -- the brass
+     has to keep working, and it does not against cold gray. */
+  @media (prefers-color-scheme: light) {
+    :root {
+      --field:     #f4efe4;
+      --plate:     #fbf8f1;
+      --plate-2:   #f2ece0;
+      --rule:      #ddd2bd;
+      --brass:     #8a6320;
+      --brass-lit: #6d4d16;
+      --brass-dim: #a8925f;
+      --silver:    #1d1710;
+      --body:      #443a2b;
+      --muted:     #7d7161;
+      --verdigris: #2f6f5d;
+      --oxide:     #94402c;
+      --bed:       #ebe3d3;
+    }
+  }
+  :root[data-theme='light'] {
+    --field:     #f4efe4;
+    --plate:     #fbf8f1;
+    --plate-2:   #f2ece0;
+    --rule:      #ddd2bd;
+    --brass:     #8a6320;
+    --brass-lit: #6d4d16;
+    --brass-dim: #a8925f;
+    --silver:    #1d1710;
+    --body:      #443a2b;
+    --muted:     #7d7161;
+    --verdigris: #2f6f5d;
+    --oxide:     #94402c;
+    --bed:       #ebe3d3;
+  }
+  :root[data-theme='dark'] {
+    --field:     #010813;
+    --plate:     #0a1526;
+    --plate-2:   #0d1c30;
+    --rule:      #1d2c44;
+    --brass:     #b8862f;
+    --brass-lit: #e3b569;
+    --brass-dim: #8a6a3c;
+    --silver:    #e9ebef;
+    --body:      #c9d2de;
+    --muted:     #7f8ea3;
+    --verdigris: #4f9c86;
+    --oxide:     #b4553f;
+    --bed:       #060e1b;
+  }
+
+  body {
+    background: var(--field);
+    color: var(--body);
+    font-family: var(--sans);
+    font-size: var(--step-0);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 5vw, 3.5rem) clamp(1rem, 4vw, 2rem) 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+  }
+
+  header { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  /* The version sits beside the wordmark and again in the footer. Two people
+     comparing notes over text need to be able to say which build they are
+     looking at without opening anything -- an evening was lost to one of us
+     working from a file that was two changes behind. */
+  .eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brass);
+  }
+  .version {
+    font-family: var(--mono);
+    letter-spacing: 0.06em;
+    text-transform: none;
+    color: var(--muted);
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-size: var(--step-3);
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--silver);
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  .lede { max-width: 46ch; color: var(--body); margin: 0; }
+
+  /* The bed. This is the whole page's job, so it gets the weight -- and the
+     double rule from the site's frame, which is an outline offset from a
+     border rather than two borders. */
+  .bed {
+    position: relative;
+    background: var(--bed);
+    border: 1px solid var(--rule);
+    outline: 1px solid var(--brass-dim);
+    outline-offset: 5px;
+    border-radius: 3px;
+    padding: clamp(2rem, 8vw, 4.5rem) 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background 140ms ease, outline-color 140ms ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+  }
+  .bed:hover, .bed:focus-visible { outline-color: var(--brass); background: var(--plate); }
+  .bed:focus-visible { outline-width: 2px; }
+  .bed.over { outline-color: var(--brass-lit); outline-width: 2px; background: var(--plate); }
+
+  .bed-title {
+    font-family: var(--serif);
+    font-size: var(--step-2);
+    color: var(--silver);
+    line-height: 1.2;
+  }
+  .bed-note { color: var(--muted); font-size: 0.9375rem; max-width: 42ch; }
+
+  input[type='file'] { display: none; }
+
+  /* Settings are grouped by WHEN they take effect, not by what they do. One
+     live control sitting beside three that quietly wait for the next file is
+     worse than none -- you cannot tell which of your changes did anything. */
+  .settings { display: flex; flex-direction: column; gap: 1rem; }
+  .group {
+    padding: 1.1rem 1.4rem 1.25rem;
+    background: var(--plate);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+  }
+  .group-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 0.9rem;
+  }
+  .group-note {
+    margin: 0.9rem 0 0;
+    font-size: 0.875rem;
+    color: var(--muted);
+    max-width: 60ch;
+  }
+  .fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2.5rem;
+    align-items: flex-end;
+  }
+  .field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .field label {
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .field input[type='number'] {
+    width: 7rem;
+    background: var(--plate-2);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    color: var(--silver);
+    font-family: var(--mono);
+    font-size: 1rem;
+    padding: 0.45rem 0.6rem;
+  }
+  .field input[type='range'] { width: 12rem; accent-color: var(--brass); }
+  .field .hint { font-size: 0.8125rem; color: var(--muted); }
+  input:focus-visible, button:focus-visible {
+    outline: 2px solid var(--brass-lit);
+    outline-offset: 2px;
+  }
+
+  button {
+    font-family: var(--sans);
+    font-size: 0.9375rem;
+    font-weight: 590;
+    padding: 0.6rem 1.15rem;
+    border-radius: 2px;
+    border: 1px solid var(--brass-dim);
+    background: transparent;
+    color: var(--brass-lit);
+    cursor: pointer;
+    transition: background 120ms ease, border-color 120ms ease;
+  }
+  button:hover { background: color-mix(in srgb, var(--brass) 14%, transparent); border-color: var(--brass); }
+  button.primary { background: var(--brass); border-color: var(--brass); color: #0b1220; }
+  button.primary:hover { background: var(--brass-lit); }
+  :root[data-theme='light'] button.primary,
+  html:not([data-theme='dark']) button.primary { color: #fbf8f1; }
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme='light']) button.primary { color: #0b1220; }
+  }
+  button:disabled { opacity: 0.4; cursor: default; }
+
+  .status {
+    font-family: var(--mono);
+    font-size: 0.875rem;
+    color: var(--muted);
+    min-height: 1.4em;
+  }
+  .status.working { color: var(--brass-lit); }
+  .status.bad { color: var(--oxide); }
+  .status.good { color: var(--verdigris); }
+
+  .results { display: flex; flex-direction: column; gap: 2.5rem; }
+
+  .scan-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .scan-name {
+    font-family: var(--serif);
+    font-size: var(--step-1);
+    color: var(--silver);
+    overflow-wrap: anywhere;
+  }
+  .scan-meta { font-family: var(--mono); font-size: 0.8125rem; color: var(--muted); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+  .coin { display: flex; flex-direction: column; gap: 0.5rem; }
+  .coin .plate {
+    position: relative;
+    background: var(--plate);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  .coin img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .coin .caption {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+  }
+  .coin .caption b { color: var(--body); font-weight: 500; }
+  .coin .cap-left { display: flex; align-items: center; gap: 0.4rem; }
+
+  /* Shown while an angle is being worked. A fixed cross with the coin turning
+     under it is the whole trick: line the date or the legend up against a rule
+     that does not move.
+
+     Drawn in difference blend rather than a chosen color, because a fixed hue
+     disappears -- brass vanishes on a brass token, white vanishes on silver.
+     Difference inverts whatever is underneath, so the line is legible on a
+     dark copper and on a bright proof without either being a special case. */
+  .coin .guides {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    mix-blend-mode: difference;
+    transition: opacity 120ms ease;
+    background:
+      /* centre cross, the one that does the work */
+      linear-gradient(to right, transparent calc(50% - 0.75px),
+        rgb(255 255 255 / 95%) calc(50% - 0.75px), rgb(255 255 255 / 95%) calc(50% + 0.75px),
+        transparent calc(50% + 0.75px)),
+      linear-gradient(to bottom, transparent calc(50% - 0.75px),
+        rgb(255 255 255 / 95%) calc(50% - 0.75px), rgb(255 255 255 / 95%) calc(50% + 0.75px),
+        transparent calc(50% + 0.75px)),
+      /* quarter rules, for checking a legend sits level rather than merely centred */
+      linear-gradient(to bottom, transparent calc(25% - 0.5px),
+        rgb(255 255 255 / 40%) calc(25% - 0.5px), rgb(255 255 255 / 40%) calc(25% + 0.5px),
+        transparent calc(25% + 0.5px), transparent calc(75% - 0.5px),
+        rgb(255 255 255 / 40%) calc(75% - 0.5px), rgb(255 255 255 / 40%) calc(75% + 0.5px),
+        transparent calc(75% + 0.5px)),
+      linear-gradient(to right, transparent calc(25% - 0.5px),
+        rgb(255 255 255 / 40%) calc(25% - 0.5px), rgb(255 255 255 / 40%) calc(25% + 0.5px),
+        transparent calc(25% + 0.5px), transparent calc(75% - 0.5px),
+        rgb(255 255 255 / 40%) calc(75% - 0.5px), rgb(255 255 255 / 40%) calc(75% + 0.5px),
+        transparent calc(75% + 0.5px));
+  }
+  .coin.aligning .guides { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .coin .guides { transition: none; } }
+
+  .coin input[type='text'] {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--plate-2);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    color: var(--silver);
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    padding: 0.35rem 0.5rem;
+  }
+  .coin input[type='text']::placeholder { color: var(--muted); }
+
+  .side { display: flex; }
+  .side button {
+    padding: 0.1rem 0.4rem;
+    font-size: 0.75rem;
+    min-width: 0;
+    border-radius: 0;
+  }
+  .side button:first-child { border-radius: 2px 0 0 2px; }
+  .side button:last-child { border-radius: 0 2px 2px 0; margin-left: -1px; }
+  .side button.on { background: var(--brass); border-color: var(--brass); color: #0b1220; }
+  :root[data-theme='light'] .side button.on,
+  html:not([data-theme='dark']) .side button.on { color: #fbf8f1; }
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme='light']) .side button.on { color: #0b1220; }
+  }
+  .sides-all { display: flex; align-items: center; gap: 0.5rem; }
+
+  .rot { display: flex; flex-direction: column; gap: 0.35rem; }
+  .rot-row { display: flex; align-items: center; gap: 0.35rem; }
+  .rot button {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    min-width: 2.1rem;
+  }
+  .rot input[type='range'] { flex: 1; min-width: 0; accent-color: var(--brass); }
+  .rot-row .deg { margin-left: auto; }
+  .rot .deg {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    min-width: 3.1rem;
+    text-align: right;
+    cursor: pointer;
+  }
+  .rot .deg.lossy { color: var(--brass-lit); }
+  .coin img { display: block; }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+
+  .note {
+    border-left: 2px solid var(--brass-dim);
+    padding-left: 1rem;
+    color: var(--muted);
+    font-size: 0.9375rem;
+    max-width: 58ch;
+  }
+  .note b { color: var(--body); font-weight: 590; }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.5rem;
+    color: var(--muted);
+    font-size: 0.875rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+  footer ul { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.35rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">
+      <span>Brandywine Coins</span>
+      <span class="version" id="version"></span>
+    </div>
+    <h1>Scan Splitter</h1>
+    <p class="lede">
+      Put several coins on the scanner, scan once, and drop the file here. Each
+      coin comes back as its own image, measured and numbered.
+    </p>
+  </header>
+
+  <div class="settings">
+    <div class="group">
+      <div class="group-label">Set this before you open a scan</div>
+      <div class="fields">
+        <div class="field">
+          <label for="sens">Edge sensitivity</label>
+          <input type="range" id="sens" min="8" max="70" value="26">
+          <span class="hint" id="sensHint">26 — raise it if coins are missed</span>
+        </div>
+      </div>
+      <p class="group-note">
+        This is how the coins are picked out from the background. Changing it
+        finds them again from scratch, so it only takes effect on the next scan
+        you open — otherwise every ID and angle you had set would go with it.
+      </p>
+    </div>
+  </div>
+
+  <div class="bed" id="bed" tabindex="0" role="button"
+       aria-label="Choose scans, or drag them here">
+    <div class="bed-title">Drop a scan here</div>
+    <div class="bed-note">
+      Or click to choose one. JPEG, PNG, TIFF or HEIC. Several at a time is
+      fine — front and back scans stay separate.
+    </div>
+  </div>
+  <input type="file" id="picker" accept="image/*" multiple>
+
+  <div class="settings">
+    <div class="group">
+      <div class="group-label">Changes apply straight away</div>
+      <div class="fields">
+        <div class="field">
+          <label for="dpi">Scan resolution</label>
+          <input type="number" id="dpi" value="1200" min="72" max="9600" step="50">
+          <span class="hint">Used to measure each coin</span>
+        </div>
+        <div class="field">
+          <label for="pad">Margin around each coin</label>
+          <input type="range" id="pad" min="0" max="20" value="4">
+          <span class="hint" id="padHint">4%</span>
+        </div>
+        <div class="field">
+          <label for="warm">Warmth</label>
+          <input type="range" id="warm" min="-100" max="100" value="0">
+          <span class="hint" id="warmHint">Neutral — color untouched</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <div class="results" id="results"></div>
+
+  <p class="note">
+    <b>Color is untouched unless you ask.</b> Every image is cut straight out
+    of your original file at full resolution. No sharpening, no background
+    removed, nothing cloned. With warmth at neutral the pixels are never even
+    read back — the file is the crop, and a rotation if you asked for one.
+  </p>
+  <p class="note">
+    <b>Quarter turns are free.</b> The ↺ and ↻ buttons move whole pixels, so the
+    coin is untouched. The slider gets you close and −1° / +1° land it; any
+    angle off the square means the pixels
+    have to be redrawn, and the corners are filled in with the color of your
+    scanner bed taken from the edge of the scan. The angle turns gold to tell
+    you which coins that happened to.
+  </p>
+  <p class="note">
+    <b>Warmth touches the coin, not the paper.</b> It moves red up and blue down
+    together — a white balance, the thing a photographer does with a gray card,
+    not a color grade. The background stays exactly as scanned, so a white bed
+    stays white instead of going cream. Better still, set the warmth in your
+    scanner software and leave this at neutral, so the file is right before it
+    is ever saved.
+  </p>
+
+  <footer>
+    <div><b>If it misses coins or finds things that are not coins</b></div>
+    <ul>
+      <li>Leave a gap between coins. Touching coins are read as one.</li>
+      <li>Hover the rotate controls to bring up an alignment cross. The coin
+        turns under it, so line the date or the legend up against it.</li>
+      <li>Every zip includes a small <code>manifest.csv</code> listing each
+        file's ID, side, angle and size — nothing you need to read, but it is
+        what lets the rest of the system use these images without asking you
+        questions.</li>
+      <li>Type the Inventory ID under a coin and the file is named for it —
+        <code>BWC-2026-0000074-front.png</code>. Scan the fronts, then the backs
+        in the same order, and the pairs name themselves.</li>
+      <li>Raise edge sensitivity for coins close in tone to the background.</li>
+      <li>Any background works — white, black, a colored card. It learns the
+        background from the edge of the scan.</li>
+      <li>Close the lid, or lay a plain card over the coins. A busy background
+        gives it more to find.</li>
+    </ul>
+    <div>Your scans never leave this computer. Everything happens in the browser.</div>
+    <div class="version" id="versionFoot"></div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // Bump this on every build that leaves this machine. It is written into the
+  // page, the tab title and the footer so "which one have you got open?" has a
+  // one-word answer.
+  var VERSION = 'v8 · 8 Aug 2026';
+
+  document.getElementById('version').textContent = VERSION;
+  document.getElementById('versionFoot').textContent = 'Scan Splitter ' + VERSION;
+
+  var bed = document.getElementById('bed');
+  var picker = document.getElementById('picker');
+  var statusEl = document.getElementById('status');
+  var results = document.getElementById('results');
+  var dpiEl = document.getElementById('dpi');
+  var sensEl = document.getElementById('sens');
+  var padEl = document.getElementById('pad');
+  var sensHint = document.getElementById('sensHint');
+  var padHint = document.getElementById('padHint');
+
+  var warmth = 0;
+  var PREVIEW = 460;      // thumbnails render at this size, files at full size
+  var allCoins = [];      // every coin on screen, so the live controls can reach them
+  var allMeta = [];       // the per-scan summary lines, same reason
+
+  // A color-temperature shift, not a color grade: red up and blue down by
+  // the same amount, green untouched. That is the correction a photographer
+  // makes with a gray card, and it is the whole extent of what this does.
+  function warmGains() {
+    var w = warmth / 100;
+    return { r: 1 + 0.15 * w, b: 1 - 0.15 * w };
+  }
+
+  var DETECT_W = 1400;    // find the coins on a small copy; crop from the original
+  var MIN_FRAC = 0.0004;  // ignore specks
+
+  function say(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = 'status' + (kind ? ' ' + kind : '');
+  }
+
+  sensEl.addEventListener('input', function () {
+    sensHint.textContent = sensEl.value + ' — raise it if coins are missed';
+  });
+  padEl.addEventListener('input', function () {
+    padHint.textContent = padEl.value + '%';
+  });
+
+  // Anything that only changes how a crop is framed or labelled can be redone
+  // on the spot from the scan still in memory. Only the coin-finding itself
+  // needs the file opened again.
+  var liveTimer = null;
+  function liveRefresh() {
+    if (liveTimer) clearTimeout(liveTimer);
+    liveTimer = setTimeout(function () {
+      allCoins.forEach(function (c) { if (c.reframe) c.reframe(); });
+      allMeta.forEach(function (f) { f(); });
+    }, 120);
+  }
+  dpiEl.addEventListener('input', liveRefresh);
+  padEl.addEventListener('input', liveRefresh);
+
+  var warmEl = document.getElementById('warm');
+  var warmHint = document.getElementById('warmHint');
+  var warmTimer = null;
+  warmEl.addEventListener('input', function () {
+    warmth = parseInt(warmEl.value, 10);
+    warmHint.textContent = warmth === 0
+      ? 'Neutral — color untouched'
+      : (warmth > 0 ? '+' + warmth + ' warmer' : warmth + ' cooler');
+    // Repainting every thumbnail on every pixel of slider travel would stutter,
+    // so it settles first. The previews are real renders, not an approximation
+    // of one, which is the only way what he sees can be what he saves.
+    if (warmTimer) clearTimeout(warmTimer);
+    warmTimer = setTimeout(function () {
+      allCoins.forEach(function (c) { if (c.repaint) c.repaint(); });
+      allMeta.forEach(function (f) { f(); });
+    }, 120);
+  });
+
+  /* ---------------------------------------------------------------- intake */
+
+  bed.addEventListener('click', function () { picker.click(); });
+  bed.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); picker.click(); }
+  });
+  picker.addEventListener('change', function () {
+    if (picker.files.length) run(Array.prototype.slice.call(picker.files));
+  });
+  ['dragenter', 'dragover'].forEach(function (t) {
+    bed.addEventListener(t, function (e) { e.preventDefault(); bed.classList.add('over'); });
+  });
+  ['dragleave', 'drop'].forEach(function (t) {
+    bed.addEventListener(t, function (e) { e.preventDefault(); bed.classList.remove('over'); });
+  });
+  bed.addEventListener('drop', function (e) {
+    var files = Array.prototype.slice.call(e.dataTransfer.files)
+      .filter(function (f) { return /^image\//.test(f.type) || /\.(tiff?|heic|heif)$/i.test(f.name); });
+    if (files.length) run(files);
+    else say('That was not an image file.', 'bad');
+  });
+  window.addEventListener('dragover', function (e) { e.preventDefault(); });
+  window.addEventListener('drop', function (e) { e.preventDefault(); });
+
+  /* --------------------------------------------------------------- loading */
+
+  function loadImage(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () { resolve({ img: img, url: url }); };
+      img.onerror = function () {
+        URL.revokeObjectURL(url);
+        reject(new Error('This browser could not open ' + file.name +
+          '. Safari opens HEIC; other browsers need JPEG, PNG or TIFF.'));
+      };
+      img.src = url;
+    });
+  }
+
+  /* ------------------------------------------------------------- detection */
+
+  // Learn the background from a ring of pixels around the edge of the scan,
+  // then treat anything far from that color as an object. Doing it this way
+  // rather than "darker than white" means a black bed, a colored card and
+  // plain paper all behave the same.
+  function backgroundColor(d, w, h) {
+    var rs = [], gs = [], bs = [], i, x, y;
+    function take(x, y) {
+      i = (y * w + x) * 4;
+      rs.push(d[i]); gs.push(d[i + 1]); bs.push(d[i + 2]);
+    }
+    for (x = 0; x < w; x += 2) { take(x, 0); take(x, h - 1); }
+    for (y = 0; y < h; y += 2) { take(0, y); take(w - 1, y); }
+    function median(a) { a.sort(function (p, q) { return p - q; }); return a[a.length >> 1]; }
+    return [median(rs), median(gs), median(bs)];
+  }
+
+  function detect(d, w, h, sensitivity) {
+    var bg = backgroundColor(d, w, h);
+    var cut = sensitivity * sensitivity * 3;   // squared distance, 3 channels
+    var mask = new Uint8Array(w * h);
+    var i, p, dr, dg, db;
+    for (i = 0, p = 0; p < w * h; p++, i += 4) {
+      dr = d[i] - bg[0]; dg = d[i + 1] - bg[1]; db = d[i + 2] - bg[2];
+      mask[p] = (dr * dr + dg * dg + db * db) > cut ? 1 : 0;
+    }
+
+    // Run-length connected components with union-find. Cheap, and exact for
+    // the thing we care about: separated round objects.
+    var parent = [];
+    function find(a) { while (parent[a] !== a) { parent[a] = parent[parent[a]]; a = parent[a]; } return a; }
+    function union(a, b) { var ra = find(a), rb = find(b); if (ra !== rb) parent[rb] = ra; }
+
+    var prevRuns = [], runs, x, y, x0, id;
+    var allRuns = [];
+    for (y = 0; y < h; y++) {
+      runs = [];
+      x = 0;
+      while (x < w) {
+        if (mask[y * w + x]) {
+          x0 = x;
+          while (x < w && mask[y * w + x]) x++;
+          id = parent.length;
+          parent.push(id);
+          runs.push([x0, x - 1, id]);
+          allRuns.push([x0, x - 1, id, y]);
+        } else x++;
+      }
+      for (var a = 0; a < runs.length; a++) {
+        for (var b = 0; b < prevRuns.length; b++) {
+          if (runs[a][0] <= prevRuns[b][1] && prevRuns[b][0] <= runs[a][1]) {
+            union(runs[a][2], prevRuns[b][2]);
+          }
+        }
+      }
+      prevRuns = runs;
+    }
+
+    // Boxes are built only after every union is known. Accumulating them as
+    // the rows go by looks equivalent and is not: two runs that turn out to
+    // belong to the same coin several rows later would have already been filed
+    // under different roots, and each fragment then fails the shape test.
+    var boxes = {};
+    for (var r = 0; r < allRuns.length; r++) {
+      var run = allRuns[r];
+      var root = find(run[2]);
+      var bx = boxes[root];
+      if (!bx) { bx = boxes[root] = [run[0], run[3], run[1], run[3], 0]; }
+      if (run[0] < bx[0]) bx[0] = run[0];
+      if (run[1] > bx[2]) bx[2] = run[1];
+      if (run[3] < bx[1]) bx[1] = run[3];
+      if (run[3] > bx[3]) bx[3] = run[3];
+      bx[4] += run[1] - run[0] + 1;
+    }
+
+    var minArea = MIN_FRAC * w * h;
+    var found = [];
+    Object.keys(boxes).forEach(function (key) {
+      var bx = boxes[key];
+      var bw = bx[2] - bx[0] + 1, bh = bx[3] - bx[1] + 1;
+      if (bx[4] < minArea) return;
+      var ratio = bw / bh;
+      if (ratio < 0.6 || ratio > 1.65) return;         // coins are round
+      if (bx[4] / (bw * bh) < 0.55) return;            // and solid, not a streak
+      found.push({ x: bx[0], y: bx[1], w: bw, h: bh });
+    });
+
+    // Reading order: banded by row so a coin sitting slightly high on the
+    // right does not jump ahead of the one on the left.
+    if (found.length) {
+      var sizes = found.map(function (f) { return f.h; }).sort(function (p, q) { return p - q; });
+      var band = Math.max(1, sizes[sizes.length >> 1] * 0.6);
+      found.sort(function (p, q) {
+        var rp = Math.floor((p.y + p.h / 2) / band), rq = Math.floor((q.y + q.h / 2) / band);
+        return rp === rq ? p.x - q.x : rp - rq;
+      });
+    }
+    return { boxes: found, bg: bg };
+  }
+
+  /* ------------------------------------------------------------------- zip */
+
+  var crcTable = (function () {
+    var t = new Uint32Array(256), c, n, k;
+    for (n = 0; n < 256; n++) {
+      c = n;
+      for (k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+
+  function crc32(bytes) {
+    var c = 0xFFFFFFFF;
+    for (var i = 0; i < bytes.length; i++) c = crcTable[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+
+  // Store-only ZIP. PNG is already compressed, so deflating again would buy
+  // nothing and cost a dependency this page is not allowed to load.
+  function makeZip(entries) {
+    var enc = new TextEncoder();
+    var locals = [], central = [], offset = 0;
+
+    entries.forEach(function (e) {
+      var name = enc.encode(e.name);
+      var crc = crc32(e.data);
+      var lh = new Uint8Array(30 + name.length);
+      var v = new DataView(lh.buffer);
+      v.setUint32(0, 0x04034b50, true);
+      v.setUint16(4, 20, true);
+      v.setUint32(14, crc, true);
+      v.setUint32(18, e.data.length, true);
+      v.setUint32(22, e.data.length, true);
+      v.setUint16(26, name.length, true);
+      lh.set(name, 30);
+      locals.push(lh, e.data);
+
+      var ch = new Uint8Array(46 + name.length);
+      var cv = new DataView(ch.buffer);
+      cv.setUint32(0, 0x02014b50, true);
+      cv.setUint16(4, 20, true);
+      cv.setUint16(6, 20, true);
+      cv.setUint32(16, crc, true);
+      cv.setUint32(20, e.data.length, true);
+      cv.setUint32(24, e.data.length, true);
+      cv.setUint16(28, name.length, true);
+      cv.setUint32(42, offset, true);
+      ch.set(name, 46);
+      central.push(ch);
+      offset += lh.length + e.data.length;
+    });
+
+    var centralSize = central.reduce(function (n, c) { return n + c.length; }, 0);
+    var end = new Uint8Array(22);
+    var ev = new DataView(end.buffer);
+    ev.setUint32(0, 0x06054b50, true);
+    ev.setUint16(8, entries.length, true);
+    ev.setUint16(10, entries.length, true);
+    ev.setUint32(12, centralSize, true);
+    ev.setUint32(16, offset, true);
+
+    return new Blob(locals.concat(central, [end]), { type: 'application/zip' });
+  }
+
+  function save(blob, name) {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+
+  /* ------------------------------------------------------------------- run */
+
+  function stem(name) { return name.replace(/\.[^.]+$/, '').replace(/[^\w -]+/g, '_'); }
+
+  // The typed Inventory ID becomes the filename, with the side appended, so a
+  // pair of scans lands as BWC-2026-0000074-front.png and -back.png and needs
+  // no renaming later. Blank falls back to the position in the scan. `used`
+  // keeps a zip from carrying two files of the same name when he pastes the
+  // same ID twice.
+  function fileName(st, used) {
+    var base = String(st.label || '').trim()
+      .replace(/\.[a-z0-9]+$/i, '')
+      .replace(/[^\w .()-]+/g, '_')
+      .replace(/^[.\s]+|[.\s]+$/g, '');
+    if (!base) base = st.auto;
+    var name = base + '-' + st.side, n = name, i = 2;
+    while (used[n]) { n = name + '-' + i; i += 1; }
+    used[n] = true;
+    return n + '.png';
+  }
+  function pause() { return new Promise(function (r) { setTimeout(r, 0); }); }
+
+  // Scans stay decoded in memory after cutting, because the rotate controls
+  // re-cut from the original rather than from the thumbnail. They are released
+  // when the next batch starts.
+  var liveUrls = [];
+
+  function run(files) {
+    results.innerHTML = '';
+    liveUrls.forEach(function (u) { URL.revokeObjectURL(u); });
+    liveUrls = [];
+    allCoins = [];
+    allMeta = [];
+    (function next(i) {
+      if (i >= files.length) { say('Done.', 'good'); return; }
+      handle(files[i], i, files.length)
+        .then(function () { return next(i + 1); })
+        .catch(function (err) { say(err.message, 'bad'); });
+    })(0);
+  }
+
+  function handle(file, index, total) {
+    var label = total > 1 ? ' (' + (index + 1) + ' of ' + total + ')' : '';
+    say('Opening ' + file.name + label + '…', 'working');
+
+    return loadImage(file).then(function (loaded) {
+      var img = loaded.img;
+      var W = img.naturalWidth, H = img.naturalHeight;
+
+      say('Finding coins in ' + file.name + label + '…', 'working');
+      return pause().then(function () {
+        var sw = Math.min(DETECT_W, W);
+        var sh = Math.max(1, Math.round(H * sw / W));
+        var small = document.createElement('canvas');
+        small.width = sw; small.height = sh;
+        var sctx = small.getContext('2d', { willReadFrequently: true });
+        sctx.drawImage(img, 0, 0, sw, sh);
+        var data = sctx.getImageData(0, 0, sw, sh).data;
+
+        var sensUsed = parseInt(sensEl.value, 10);
+        var hit = detect(data, sw, sh, sensUsed);
+        var boxes = hit.boxes;
+        var scale = W / sw;
+        var dpi = Math.max(1, parseFloat(dpiEl.value) || 1200);
+        var padPct = parseInt(padEl.value, 10) / 100;
+
+        render(file, img, loaded.url, boxes, scale, dpi, padPct, W, H, hit.bg, sensUsed);
+      });
+    });
+  }
+
+  function render(file, img, url, boxes, scale, dpi, padPct, W, H, bg, sens) {
+    liveUrls.push(url);
+    var block = document.createElement('section');
+    var head = document.createElement('div');
+    head.className = 'scan-head';
+    var name = document.createElement('div');
+    name.className = 'scan-name';
+    name.textContent = file.name;
+    var meta = document.createElement('div');
+    meta.className = 'scan-meta';
+    // The scan's physical size is shown as a check on the resolution setting.
+    // A bed is roughly 8.5 by 11 inches; if this reads 4 by 3, the file has
+    // been resized somewhere and every measurement below it is wrong.
+    function updateMeta() {
+      var dpiNow = Math.max(1, parseFloat(dpiEl.value) || 1200);
+      meta.textContent = boxes.length + (boxes.length === 1 ? ' coin' : ' coins') +
+        ' · ' + W + ' × ' + H + ' px · ' +
+        (W / dpiNow).toFixed(1) + ' × ' + (H / dpiNow).toFixed(1) +
+        ' in at ' + dpiNow + ' dpi' +
+        (warmth ? ' · warmth ' + (warmth > 0 ? '+' : '') + warmth : '');
+    }
+    updateMeta();
+    allMeta.push(updateMeta);
+    head.appendChild(name); head.appendChild(meta);
+    block.appendChild(head);
+
+    if (!boxes.length) {
+      var none = document.createElement('p');
+      none.className = 'note';
+      none.textContent = 'No coins found. Try raising edge sensitivity, or check ' +
+        'that the coins are not touching each other or the edge of the glass.';
+      block.appendChild(none);
+      results.appendChild(block);
+      URL.revokeObjectURL(url);
+      say('Nothing found in ' + file.name + '.', 'bad');
+      return;
+    }
+
+    var coins = [];
+
+    // A whole scan is usually one side of a tray, so setting them together is
+    // the common case and clicking twelve toggles is the rare one.
+    var allRow = document.createElement('div');
+    allRow.className = 'sides-all';
+    var allLabel = document.createElement('span');
+    allLabel.className = 'scan-meta';
+    allLabel.textContent = 'Set every coin to';
+    var allSide = document.createElement('div');
+    allSide.className = 'side';
+    ['front', 'back'].forEach(function (which) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = which === 'front' ? 'Front' : 'Back';
+      b.addEventListener('click', function () {
+        coins.forEach(function (c) { if (c.setSide) c.setSide(which); });
+      });
+      allSide.appendChild(b);
+    });
+    allRow.appendChild(allLabel); allRow.appendChild(allSide);
+    block.appendChild(allRow);
+
+    var grid = document.createElement('div');
+    grid.className = 'grid';
+    block.appendChild(grid);
+    results.appendChild(block);
+
+    var base = stem(file.name);
+
+    // Each coin keeps its own angle. They land on the glass every which way,
+    // so rotating the sheet as a whole would be no use.
+    //
+    // Quarter turns and the fine angle are kept apart on purpose. A quarter
+    // turn just moves whole pixels, so it costs nothing; any other angle has
+    // to resample, and the readout says so rather than quietly doing it.
+    function draw(st, max) {
+      var quarterOdd = st.quarter % 2 === 1;
+      var fullW = quarterOdd ? st.sh : st.sw;
+      var fullH = quarterOdd ? st.sw : st.sh;
+      // Previews render small and the saved file renders full size, but both
+      // go through this one function -- so what is on screen is what lands on
+      // disk, corner fill, warmth and all.
+      var k = max ? Math.min(1, max / Math.max(fullW, fullH)) : 1;
+      var ow = Math.max(1, Math.round(fullW * k));
+      var oh = Math.max(1, Math.round(fullH * k));
+      var c = document.createElement('canvas');
+      c.width = ow; c.height = oh;
+      var ctx = c.getContext('2d');
+      ctx.imageSmoothingQuality = 'high';
+      // Turning a coin off-square swings the corners of the crop out of frame
+      // and leaves wedges behind. Left transparent they would survive as far as
+      // eBay and then be flattened to black on conversion, so they are filled
+      // with the color of his own scanner bed, read from the edge of the scan.
+      // No pixel of the coin is affected; the paper simply continues.
+      ctx.fillStyle = 'rgb(' + bg[0] + ',' + bg[1] + ',' + bg[2] + ')';
+      ctx.fillRect(0, 0, ow, oh);
+      ctx.translate(ow / 2, oh / 2);
+      ctx.rotate((st.quarter * 90 + st.fine) * Math.PI / 180);
+      // Drawn straight from the source image with a source rectangle, so the
+      // crop stays full resolution without ever allocating a canvas the size
+      // of the whole scan -- which browsers refuse for a 138 megapixel file.
+      ctx.drawImage(img, st.sx, st.sy, st.sw, st.sh,
+                    -st.sw * k / 2, -st.sh * k / 2, st.sw * k, st.sh * k);
+
+      // At neutral the pixels are never read back, let alone rewritten -- the
+      // file is the crop and nothing more.
+      if (warmth !== 0) {
+        var g = warmGains();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        var id = ctx.getImageData(0, 0, ow, oh);
+        var d2 = id.data;
+
+        // Warmth lands on the coin and not on the paper. Warming the whole
+        // frame turns a white bed cream, which reads as a grubby scan rather
+        // than a warm one -- and the corners filled in behind a rotation would
+        // drift away from the paper they are meant to continue.
+        //
+        // The test is the one the detector already used: how far this pixel is
+        // from the color of the bed. Ramped rather than switched, so the rim
+        // and its shadow fade into the effect instead of leaving a halo.
+        var lo = sens * 0.6, hi = sens * 1.5, span = hi - lo;
+        for (var q = 0; q < d2.length; q += 4) {
+          var dr = d2[q] - bg[0], dg = d2[q + 1] - bg[1], db = d2[q + 2] - bg[2];
+          var dist = Math.sqrt(dr * dr + dg * dg + db * db);
+          var t = (dist - lo) / span;
+          if (t <= 0) continue;
+          if (t > 1) t = 1;
+          var r2 = d2[q] * (1 + (g.r - 1) * t);
+          var b2 = d2[q + 2] * (1 + (g.b - 1) * t);
+          d2[q] = r2 > 255 ? 255 : r2;
+          d2[q + 2] = b2 > 255 ? 255 : b2;
+        }
+        ctx.putImageData(id, 0, 0);
+      }
+      return new Promise(function (resolve) { c.toBlob(resolve, 'image/png'); });
+    }
+
+    (function cut(i) {
+      if (i >= boxes.length) {
+        var actions = document.createElement('div');
+        actions.className = 'actions';
+        var all = document.createElement('button');
+        all.className = 'primary';
+        all.textContent = 'Download all ' + coins.length + ' as a zip';
+        all.addEventListener('click', function () {
+          all.disabled = true;
+          var entries = [], used = {};
+          // Re-cut at whatever angles are set now, one at a time so a dozen
+          // full-resolution canvases never exist at once.
+          (function build(n) {
+            if (n >= coins.length) {
+              // A record of what was exported and, crucially, what he chose:
+              // the angle he dialled in is ground truth for any future attempt
+              // at guessing "upright" automatically. The crop box against the
+              // original scan means the unrotated coin can be reconstructed
+              // and a guess scored against his answer -- every batch he does
+              // by hand becomes labelled test data as a side effect.
+              var csv = function (v) {
+                v = String(v == null ? '' : v);
+                return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+              };
+              var dpiNow = Math.max(1, parseFloat(dpiEl.value) || 1200);
+              var lines = ['file,inventory_id,side,rotation_deg,diameter_mm,' +
+                           'crop_x,crop_y,crop_w,crop_h,dpi,warmth,scan,tool'];
+              coins.forEach(function (c) {
+                var t = (c.quarter * 90 + c.fine) % 360;
+                if (t > 180) t -= 360;
+                if (t <= -180) t += 360;
+                lines.push([c.exportName, c.label || '', c.side, t,
+                            c.mm.toFixed(2), c.sx, c.sy, c.sw, c.sh,
+                            dpiNow, warmth, file.name, VERSION]
+                           .map(csv).join(','));
+              });
+              entries.push({ name: 'manifest.csv',
+                             data: new TextEncoder().encode(lines.join('\n') + '\n') });
+              all.disabled = false;
+              say('Saved ' + entries.length + ' coins.', 'good');
+              save(makeZip(entries), base + '-coins.zip');
+              return;
+            }
+            say('Preparing ' + (n + 1) + ' of ' + coins.length + '…', 'working');
+            draw(coins[n]).then(function (blob) { return blob.arrayBuffer(); })
+              .then(function (buf) {
+                coins[n].exportName = fileName(coins[n], used);
+                entries.push({ name: coins[n].exportName, data: new Uint8Array(buf) });
+                setTimeout(function () { build(n + 1); }, 0);
+              });
+          })(0);
+        });
+        actions.appendChild(all);
+        block.appendChild(actions);
+        say('Found ' + coins.length + ' in ' + file.name + '.', 'good');
+        return;
+      }
+
+      var b = boxes[i];
+      var num = String(i + 1).padStart(2, '0');
+      var st = {
+        quarter: 0,
+        fine: 0,
+        auto: base + '-' + num,
+        label: '',
+        side: 'front'
+      };
+
+      // The crop rectangle is derived, never stored as a decision. Margin and
+      // resolution can therefore change after the fact and the coin simply
+      // reframes -- no reopening the file, and nothing typed is lost.
+      st.reframe = function () {
+        var padNow = parseInt(padEl.value, 10) / 100;
+        var dpiNow = Math.max(1, parseFloat(dpiEl.value) || 1200);
+        var pad = Math.round(Math.max(b.w, b.h) * scale * padNow);
+        st.sx = Math.max(0, Math.round(b.x * scale) - pad);
+        st.sy = Math.max(0, Math.round(b.y * scale) - pad);
+        st.sw = Math.min(W - st.sx, Math.round(b.w * scale) + pad * 2);
+        st.sh = Math.min(H - st.sy, Math.round(b.h * scale) + pad * 2);
+        st.mm = (Math.round(b.w * scale) / dpiNow) * 25.4;
+        if (st.setMm) st.setMm();
+        return st.repaint ? st.repaint() : Promise.resolve();
+      };
+      st.reframe();
+      coins.push(st);
+
+      draw(st, PREVIEW).then(function (blob) {
+        var cell = document.createElement('div');
+        cell.className = 'coin';
+
+        var plate = document.createElement('div');
+        plate.className = 'plate';
+        var thumb = new Image();
+        thumb.src = URL.createObjectURL(blob);
+        thumb.alt = 'Coin ' + num + ' from ' + file.name;
+        plate.appendChild(thumb);
+        var guides = document.createElement('div');
+        guides.className = 'guides';
+        plate.appendChild(guides);
+
+        var thumbUrl = thumb.src;
+        st.repaint = function () {
+          return draw(st, PREVIEW).then(function (b) {
+            var stale = thumbUrl;
+            thumbUrl = URL.createObjectURL(b);
+            thumb.src = thumbUrl;
+            setTimeout(function () { URL.revokeObjectURL(stale); }, 250);
+          });
+        };
+        allCoins.push(st);
+
+        // Guides come up while an angle is being worked and fade once he stops.
+        var guideTimer = null;
+        function showGuides() {
+          cell.classList.add('aligning');
+          if (guideTimer) clearTimeout(guideTimer);
+          guideTimer = setTimeout(function () {
+            cell.classList.remove('aligning');
+          }, 2600);
+        }
+        function holdGuides(on) {
+          if (guideTimer) { clearTimeout(guideTimer); guideTimer = null; }
+          cell.classList.toggle('aligning', on);
+        }
+
+        var idField = document.createElement('input');
+        idField.type = 'text';
+        idField.placeholder = 'Inventory ID';
+        idField.setAttribute('aria-label', 'Inventory ID for coin ' + num);
+        idField.addEventListener('input', function () { st.label = idField.value; });
+
+        var side = document.createElement('div');
+        side.className = 'side';
+        var frontBtn = document.createElement('button');
+        frontBtn.type = 'button'; frontBtn.textContent = 'Front';
+        var backBtn = document.createElement('button');
+        backBtn.type = 'button'; backBtn.textContent = 'Back';
+        st.setSide = function (which) {
+          st.side = which;
+          frontBtn.classList.toggle('on', which === 'front');
+          backBtn.classList.toggle('on', which === 'back');
+          frontBtn.setAttribute('aria-pressed', String(which === 'front'));
+          backBtn.setAttribute('aria-pressed', String(which === 'back'));
+        };
+        frontBtn.addEventListener('click', function () { st.setSide('front'); });
+        backBtn.addEventListener('click', function () { st.setSide('back'); });
+        side.appendChild(frontBtn); side.appendChild(backBtn);
+        st.setSide('front');
+
+        var cap = document.createElement('div');
+        cap.className = 'caption';
+        var capLeft = document.createElement('div');
+        capLeft.className = 'cap-left';
+        var numEl = document.createElement('span');
+        numEl.textContent = num;
+        capLeft.appendChild(numEl); capLeft.appendChild(side);
+        var right = document.createElement('b');
+        st.setMm = function () { right.textContent = st.mm.toFixed(1) + ' mm'; };
+        st.setMm();
+        cap.appendChild(capLeft); cap.appendChild(right);
+
+        var rot = document.createElement('div');
+        rot.className = 'rot';
+        var ccw = document.createElement('button');
+        ccw.type = 'button'; ccw.textContent = '↺';
+        ccw.title = 'Quarter turn left (lossless)';
+        ccw.setAttribute('aria-label', 'Rotate coin ' + num + ' left');
+        var cw = document.createElement('button');
+        cw.type = 'button'; cw.textContent = '↻';
+        cw.title = 'Quarter turn right (lossless)';
+        cw.setAttribute('aria-label', 'Rotate coin ' + num + ' right');
+        var fine = document.createElement('input');
+        fine.type = 'range'; fine.min = '-45'; fine.max = '45'; fine.step = '1';
+        fine.value = '0';
+        fine.title = 'Fine angle';
+        fine.setAttribute('aria-label', 'Fine angle for coin ' + num);
+        var deg = document.createElement('span');
+        deg.className = 'deg';
+        deg.title = 'Click to reset';
+
+        // Signed, so a small nudge left reads as -12 rather than 348.
+        function total() {
+          var t = (st.quarter * 90 + st.fine) % 360;
+          if (t > 180) t -= 360;
+          if (t <= -180) t += 360;
+          return t;
+        }
+        function refresh(initial) {
+          if (!initial) {
+            if (st.repaint) st.repaint();
+            showGuides();
+          }
+          deg.textContent = total() + '°';
+          // Flagged, not prevented -- a straight coin is worth a resample, but
+          // he should know which images were touched and which were not.
+          deg.classList.toggle('lossy', st.fine !== 0);
+          deg.title = st.fine === 0
+            ? 'Quarter turns only — no pixels changed. Click to reset.'
+            : 'Off-square angles resample the image. Click to reset.';
+        }
+        ccw.addEventListener('click', function () { st.quarter = (st.quarter + 3) % 4; refresh(); });
+        cw.addEventListener('click', function () { st.quarter = (st.quarter + 1) % 4; refresh(); });
+        fine.addEventListener('input', function () { st.fine = parseInt(fine.value, 10); refresh(); });
+        deg.addEventListener('click', function () {
+          st.quarter = 0; st.fine = 0; fine.value = '0'; refresh();
+        });
+        // A degree at a time, which is the unit that actually matters when
+        // squaring up a legend. The slider is for getting close; these are for
+        // landing. Stepping past the slider's range rolls into a quarter turn
+        // rather than stopping dead, so the buttons never hit a wall.
+        function nudge(d) {
+          var f = st.fine + d;
+          while (f > 45) { f -= 90; st.quarter = (st.quarter + 1) % 4; }
+          while (f < -45) { f += 90; st.quarter = (st.quarter + 3) % 4; }
+          st.fine = f;
+          fine.value = String(f);
+          refresh();
+        }
+        function nudgeButton(label, delta, words) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.textContent = label;
+          b.title = words;
+          b.setAttribute('aria-label', words + ' for coin ' + num);
+          b.addEventListener('click', function () { nudge(delta); });
+          return b;
+        }
+        var minus = nudgeButton('−1°', -1, 'Nudge one degree left');
+        var plus = nudgeButton('+1°', 1, 'Nudge one degree right');
+
+        var rowA = document.createElement('div');
+        rowA.className = 'rot-row';
+        rowA.appendChild(ccw); rowA.appendChild(cw); rowA.appendChild(deg);
+        var rowB = document.createElement('div');
+        rowB.className = 'rot-row';
+        rowB.appendChild(minus); rowB.appendChild(fine); rowB.appendChild(plus);
+        rot.appendChild(rowA); rot.appendChild(rowB);
+        rot.addEventListener('pointerenter', function () { holdGuides(true); });
+        rot.addEventListener('pointerleave', function () { holdGuides(false); });
+        rot.addEventListener('focusin', function () { holdGuides(true); });
+        rot.addEventListener('focusout', function () { holdGuides(false); });
+        refresh(true);
+
+        var one = document.createElement('button');
+        one.type = 'button';
+        one.textContent = 'Save this one';
+        one.style.marginTop = '0.15rem';
+        one.addEventListener('click', function () {
+          draw(st).then(function (b2) { save(b2, fileName(st, {})); });
+        });
+
+        cell.appendChild(plate);
+        cell.appendChild(idField);
+        cell.appendChild(cap);
+        cell.appendChild(rot);
+        cell.appendChild(one);
+        grid.appendChild(cell);
+
+        say('Cutting ' + (i + 1) + ' of ' + boxes.length + '…', 'working');
+        setTimeout(function () { cut(i + 1); }, 0);
+      });
+    })(0);
+  }
+})();
+</script>
+</body></html>
