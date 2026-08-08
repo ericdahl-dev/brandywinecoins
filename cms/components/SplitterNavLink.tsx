@@ -10,6 +10,11 @@ import React from 'react';
  * without importing anything from the admin UI package.
  */
 export const SplitterNavLink: React.FC = () => (
+  // The lint rule assumes the destination is a page, where <Link /> gives a
+  // client-side transition. This destination is a route handler returning raw
+  // HTML; a client-side transition is precisely the wrong behaviour, and a
+  // full navigation is the point.
+  // eslint-disable-next-line @next/next/no-html-link-for-pages
   <a className="nav__link" href="/admin/tools/split">
     Scan Splitter
   </a>
