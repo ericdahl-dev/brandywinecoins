@@ -116,6 +116,36 @@ test at the bottom of this file made concrete.
   the HTML. The moment logic starts migrating into Swift because it is
   "cleaner," the update loop is dead and the browser fallback rots.
 
+## Where the intelligence lives
+
+The app is the confirmation surface; the models stay in n8n. Vision calls,
+API keys and per-coin cost belong server-side where they can be changed
+without re-shipping a signed binary. The app captures, shows suggestions,
+and collects Mike's yes or no.
+
+The manifests are the exam, not the textbook. Thirty coins trains nothing;
+what the accumulated manifests do is *score* a model before it is trusted --
+auto-upright ships as a suggestion only after it beats the 5/5 test in
+`coin-alignment.md` against angles Mike actually chose -- and his corrections
+become few-shot examples of how he names things, not weights.
+
+The flow this buys, per tray: scan fronts -> one vision call per coin drafts
+country, date, denomination and ruler from the legend (the job done by hand on
+Aug 8 to identify the 2 kr and 5 ore), plus a suggested upright angle, plus
+the measured diameter checked against catalog spec as a confidence signal ->
+Mike reviews instead of typing -> flip, scan backs, position-paired -> confirm
+-> rows, photos and attribution land in Airtable. Prices and the final word on
+every attribution stay his: the model drafts, the numismatist decides.
+
+Two riders that belong to the same goal:
+
+- **Minted Inventory IDs.** The largest typing task in the flow is
+  `BWC-2026-0000074` thirty times, and it needs no AI -- the system assigns
+  the next ID from a counter via n8n. Nobody types an ID again.
+- **The slab path.** Slabs cannot scan (optics), but a phone photo of the
+  label + cert-number OCR -> NGC/PCGS cert lookup -> complete attribution
+  from the grading house that already did the work.
+
 ## What it is not
 
 Not a catalogue app, not an Airtable client, not a photo editor, and not a
