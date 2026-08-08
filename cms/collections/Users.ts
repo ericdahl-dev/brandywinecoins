@@ -15,6 +15,12 @@ import type { User } from '../payload-types';
 export const Users: CollectionConfig = {
   slug: 'users',
   auth: {
+    // 30 days, not Payload's 2-hour default. The Scan Splitter lives behind
+    // this login (#81) as a bookmark Mike opens when scans arrive; a session
+    // that expires nightly turns the bookmark into a login page and the tool
+    // into a chore. Thirty days makes signing in an occasional event on a
+    // site whose admin holds exactly two accounts.
+    tokenExpiration: 60 * 60 * 24 * 30,
     forgotPassword: {
       generateEmailHTML: (args) => resetPasswordHTML({ token: args?.token ?? '' }),
       generateEmailSubject: () => resetPasswordSubject(),
