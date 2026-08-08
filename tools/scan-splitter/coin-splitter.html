@@ -1,4 +1,4 @@
-<title>Scan Splitter v9 — Brandywine Coins</title>
+<title>Scan Splitter v10 — Brandywine Coins</title>
 
 <style>
   /* Palette lifted from the Brandywine Coins site so the tool belongs to it:
@@ -524,6 +524,10 @@
       <li>Type the Inventory ID under a coin and the file is named for it —
         <code>BWC-2026-0000074-front.png</code>. Scan the fronts, then the backs
         in the same order, and the pairs name themselves.</li>
+      <li>Opened from the site while signed in, the first scan's IDs are filled
+        in for you — the next unused numbers, in order. They are ordinary
+        suggestions: retype any of them, and later scans (the backs) are never
+        filled.</li>
       <li>Raise edge sensitivity for coins close in tone to the background.</li>
       <li>Any background works — white, black, a colored card. It learns the
         background from the edge of the scan.</li>
@@ -542,7 +546,7 @@
   // Bump this on every build that leaves this machine. It is written into the
   // page, the tab title and the footer so "which one have you got open?" has a
   // one-word answer.
-  var VERSION = 'v9 · 8 Aug 2026';
+  var VERSION = 'v10 · 8 Aug 2026';
 
   document.getElementById('version').textContent = VERSION;
   document.getElementById('versionFoot').textContent = 'Scan Splitter ' + VERSION;
@@ -895,12 +899,88 @@
   }
   function pause() { return new Promise(function (r) { setTimeout(r, 0); }); }
 
+  /* ------------------------------------------------------------- prefill */
+
+  // When this page is served from the site, /admin/tools/split/next-id knows
+  // the highest Inventory ID already used and this fills the next ones in --
+  // a tray of thirty coins with no ID typing. Everything about it is
+  // best-effort by design: opened as a plain file, offline, or logged out,
+  // the fetch fails and the fields are simply empty, exactly as before.
+  //
+  // Three rules keep it honest:
+  //   - Only the FIRST batch of a session is prefilled. The second batch is
+  //     the backs, which take their IDs from the fronts; handing them fresh
+  //     numbers would be exactly wrong.
+  //   - Only empty fields are touched. Anything typed, before or after the
+  //     answer arrives, is his.
+  //   - These are suggestions, not reservations. Nothing is claimed anywhere
+  //     until the batch is actually sent on; an abandoned session simply
+  //     offers the same numbers again next time.
+  var prefillActive = false;   // true only while the first batch may register
+  var prefillStarted = false;  // the one fetch per session has been kicked off
+  var prefillPending = [];     // ID fields waiting for numbers, in scan order
+  var prefillCurrent = null;   // the next ID to hand out, once the answer lands
+
+  // BWC-2026-0000075 -> BWC-2026-0000076, with the prefix and the padding
+  // taken from the ID itself rather than assumed, so a year roll or a new
+  // scheme in Airtable changes nothing here.
+  function idAfter(id) {
+    var m = /^(.*?)(\d+)$/.exec(id);
+    if (!m) return null;
+    var n = String(parseInt(m[2], 10) + 1);
+    while (n.length < m[2].length) n = '0' + n;
+    return m[1] + n;
+  }
+
+  function prefillDrain() {
+    while (prefillCurrent && prefillPending.length) {
+      var f = prefillPending.shift();
+      if (f.input.value) continue;           // typed fields are never touched
+      f.input.value = prefillCurrent;
+      f.st.label = prefillCurrent;
+      prefillCurrent = idAfter(prefillCurrent);
+    }
+  }
+
+  function prefillRegister(input, st) {
+    if (!prefillActive) return;
+    prefillPending.push({ input: input, st: st });
+    prefillDrain();
+  }
+
+  function prefillStart() {
+    if (prefillStarted || typeof fetch !== 'function') return;
+    prefillStarted = true;
+    try {
+      // Relative to wherever this page actually is, so the hosted copy finds
+      // its sibling route and the standalone file fails fast and quietly.
+      fetch(location.pathname.replace(/\/+$/, '') + '/next-id', {
+        credentials: 'same-origin',
+        cache: 'no-store'
+      })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (data && typeof data.nextId === 'string' && data.nextId) {
+            prefillCurrent = data.nextId;
+            prefillDrain();
+          }
+        })
+        .catch(function () { /* offline, logged out, standalone: no prefill */ });
+    } catch (e) { /* same, for browsers that throw synchronously */ }
+  }
+
   // Scans stay decoded in memory after cutting, because the rotate controls
   // re-cut from the original rather than from the thumbnail. They are released
   // when the next batch starts.
   var liveUrls = [];
 
   function run(files) {
+    // First batch of the session: eligible for ID prefill. Every later batch
+    // (the back pass) is not, and any stragglers still queued from a previous
+    // batch are dropped -- their fields just left the page.
+    prefillActive = !prefillStarted;
+    prefillPending = [];
+    if (prefillActive) prefillStart();
     results.innerHTML = '';
     liveUrls.forEach(function (u) { URL.revokeObjectURL(u); });
     liveUrls = [];
@@ -1220,6 +1300,7 @@
         idField.placeholder = 'Inventory ID';
         idField.setAttribute('aria-label', 'Inventory ID for coin ' + num);
         idField.addEventListener('input', function () { st.label = idField.value; });
+        prefillRegister(idField, st);
 
         var side = document.createElement('div');
         side.className = 'side';
