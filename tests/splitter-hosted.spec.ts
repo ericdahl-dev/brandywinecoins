@@ -50,7 +50,11 @@ test('logged out, the splitter URL is a login redirect that leaks no tool', asyn
   });
 
   expect([302, 303]).toContain(response.status());
-  expect(response.headers()['location']).toContain('/admin/login');
+  // Relative, not just containing /admin/login: an absolute Location built
+  // from the request origin shipped a redirect to localhost:3000 from behind
+  // the production proxy. Relative resolves on whatever host the browser is
+  // actually on.
+  expect(response.headers()['location']).toMatch(/^\/admin\/login/);
 
   // The gate is only a gate if the body carries nothing: the tool's HTML must
   // not ride along on an unauthenticated response.
