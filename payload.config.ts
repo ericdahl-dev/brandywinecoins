@@ -52,6 +52,11 @@ export default buildConfig({
     meta: {
       titleSuffix: '— Brandywine Coins',
     },
+    components: {
+      // The splitter is a route, not a collection, so the nav does not know
+      // about it on its own. Without this link the tool is bookmark-only.
+      afterNavLinks: ['@/cms/components/SplitterNavLink#SplitterNavLink'],
+    },
   },
   collections: [Users],
   globals: [About],
